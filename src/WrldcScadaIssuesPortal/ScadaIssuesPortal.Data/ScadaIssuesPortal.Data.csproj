@@ -15,8 +15,4 @@
     <ProjectReference Include="..\ScadaIssuesPortal.Core\ScadaIssuesPortal.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Configurations\" />
-  </ItemGroup>
-
 </Project>

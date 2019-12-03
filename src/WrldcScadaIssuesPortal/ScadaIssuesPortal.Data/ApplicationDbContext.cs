@@ -13,9 +13,13 @@ namespace ScadaIssuesPortal.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
-
+            
         }
 
+        public DbSet<ReportingCase> ReportingCases { get; set; }
+        public DbSet<CaseItem> CaseItems { get; set; }
+        public DbSet<CaseItemOption> CaseItemOptions { get; set; }
+        
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

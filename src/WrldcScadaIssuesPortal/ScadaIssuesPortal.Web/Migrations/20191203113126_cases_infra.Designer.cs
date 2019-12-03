@@ -10,8 +10,8 @@ using ScadaIssuesPortal.Data;
 namespace ScadaIssuesPortal.Web.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191203092346_init")]
-    partial class init
+    [Migration("20191203113126_cases_infra")]
+    partial class cases_infra
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -215,6 +215,105 @@ namespace ScadaIssuesPortal.Web.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("ScadaIssuesPortal.Core.Entities.ReportingCase", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("AdminRemarks")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ConcernedAgencyId")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasDefaultValue(new DateTime(2019, 12, 3, 17, 1, 25, 982, DateTimeKind.Local).AddTicks(4225));
+
+                    b.Property<string>("ResolutionRemarks")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("ResolutionTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp without time zone")
+                        .HasDefaultValue(new DateTime(2019, 12, 3, 17, 1, 25, 984, DateTimeKind.Local).AddTicks(3007));
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConcernedAgencyId");
+
+                    b.ToTable("ReportingCases");
+                });
+
+            modelBuilder.Entity("ScadaIssuesPortal.Core.Entities.SurveyItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int>("CaseId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsResponseRequired")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("Question")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Response")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ResponseType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("SerialNum")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(1);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CaseId");
+
+                    b.HasIndex("Question")
+                        .IsUnique();
+
+                    b.ToTable("SurveyItems");
+                });
+
+            modelBuilder.Entity("ScadaIssuesPortal.Core.Entities.SurveyOption", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("OptionText")
+                        .HasColumnType("text");
+
+                    b.Property<int>("SurveyItemId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SurveyItemId");
+
+                    b.HasIndex("OptionText", "SurveyItemId")
+                        .IsUnique();
+
+                    b.ToTable("SurveyOptions");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -262,6 +361,31 @@ namespace ScadaIssuesPortal.Web.Migrations
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ScadaIssuesPortal.Core.Entities.ReportingCase", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "ConcernedAgency")
+                        .WithMany()
+                        .HasForeignKey("ConcernedAgencyId");
+                });
+
+            modelBuilder.Entity("ScadaIssuesPortal.Core.Entities.SurveyItem", b =>
+                {
+                    b.HasOne("ScadaIssuesPortal.Core.Entities.ReportingCase", "Case")
+                        .WithMany("SurveyItems")
+                        .HasForeignKey("CaseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ScadaIssuesPortal.Core.Entities.SurveyOption", b =>
+                {
+                    b.HasOne("ScadaIssuesPortal.Core.Entities.SurveyItem", "SurveyItem")
+                        .WithMany("Options")
+                        .HasForeignKey("SurveyItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

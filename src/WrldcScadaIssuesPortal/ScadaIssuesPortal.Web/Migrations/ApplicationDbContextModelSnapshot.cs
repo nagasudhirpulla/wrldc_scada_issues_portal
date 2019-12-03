@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using ScadaIssuesPortal.Web.Data;
+using ScadaIssuesPortal.Data;
 
 namespace ScadaIssuesPortal.Web.Migrations
 {
@@ -213,6 +213,105 @@ namespace ScadaIssuesPortal.Web.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("ScadaIssuesPortal.Core.Entities.CaseItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int>("CaseId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsResponseRequired")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("Question")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Response")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ResponseType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("SerialNum")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(1);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CaseId");
+
+                    b.HasIndex("Question")
+                        .IsUnique();
+
+                    b.ToTable("CaseItems");
+                });
+
+            modelBuilder.Entity("ScadaIssuesPortal.Core.Entities.CaseItemOption", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int>("CaseItemId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("OptionText")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CaseItemId");
+
+                    b.HasIndex("OptionText", "CaseItemId")
+                        .IsUnique();
+
+                    b.ToTable("CaseItemOptions");
+                });
+
+            modelBuilder.Entity("ScadaIssuesPortal.Core.Entities.ReportingCase", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("AdminRemarks")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ConcernedAgencyId")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasDefaultValue(new DateTime(2019, 12, 3, 17, 6, 35, 669, DateTimeKind.Local).AddTicks(5213));
+
+                    b.Property<string>("ResolutionRemarks")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("ResolutionTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp without time zone")
+                        .HasDefaultValue(new DateTime(2019, 12, 3, 17, 6, 35, 671, DateTimeKind.Local).AddTicks(1226));
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConcernedAgencyId");
+
+                    b.ToTable("ReportingCases");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -262,6 +361,31 @@ namespace ScadaIssuesPortal.Web.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ScadaIssuesPortal.Core.Entities.CaseItem", b =>
+                {
+                    b.HasOne("ScadaIssuesPortal.Core.Entities.ReportingCase", "Case")
+                        .WithMany("SurveyItems")
+                        .HasForeignKey("CaseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ScadaIssuesPortal.Core.Entities.CaseItemOption", b =>
+                {
+                    b.HasOne("ScadaIssuesPortal.Core.Entities.CaseItem", "CaseItem")
+                        .WithMany("Options")
+                        .HasForeignKey("CaseItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ScadaIssuesPortal.Core.Entities.ReportingCase", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "ConcernedAgency")
+                        .WithMany()
+                        .HasForeignKey("ConcernedAgencyId");
                 });
 #pragma warning restore 612, 618
         }

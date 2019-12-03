@@ -1,0 +1,18 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using ScadaIssuesPortal.Core
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+
+@if (SignInManager.IsSignedIn(User))
+{
+    @if (User.IsInRole(SecurityConstants.AdminRoleString))
+    {
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">Users</a>
+        </li>
+    }
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    </li>
+}

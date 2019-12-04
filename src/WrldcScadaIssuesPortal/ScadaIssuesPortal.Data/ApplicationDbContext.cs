@@ -17,7 +17,8 @@ namespace ScadaIssuesPortal.Data
         }
 
         public DbSet<ReportingCase> ReportingCases { get; set; }
-        public DbSet<CaseItem> CaseItems { get; set; }
+        public DbSet<ReportingCaseItem> ReportingCaseItems { get; set; }
+        public DbSet<CaseItemTemplate> CaseItemTemplates { get; set; }
         public DbSet<CaseItemOption> CaseItemOptions { get; set; }
         
         protected override void OnModelCreating(ModelBuilder builder)

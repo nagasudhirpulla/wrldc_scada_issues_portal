@@ -7,7 +7,7 @@ namespace ScadaIssuesPortal.Core.Entities
         public int SerialNum { get; set; }
         public string OptionText { get; set; }
 
-        public CaseItem CaseItem { get; set; }
+        public ReportingCaseItem CaseItem { get; set; }
         public int CaseItemId { get; set; }
     }
 }

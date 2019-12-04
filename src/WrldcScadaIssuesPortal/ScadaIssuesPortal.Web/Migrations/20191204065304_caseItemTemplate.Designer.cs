@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ScadaIssuesPortal.Data;
@@ -9,9 +10,10 @@ using ScadaIssuesPortal.Data;
 namespace ScadaIssuesPortal.Web.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191204065304_caseItemTemplate")]
+    partial class caseItemTemplate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -294,10 +296,7 @@ namespace ScadaIssuesPortal.Web.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
-                        .HasDefaultValue(new DateTime(2019, 12, 4, 12, 59, 0, 622, DateTimeKind.Local).AddTicks(6376));
-
-                    b.Property<DateTime>("DownTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasDefaultValue(new DateTime(2019, 12, 4, 12, 23, 4, 231, DateTimeKind.Local).AddTicks(3538));
 
                     b.Property<string>("ResolutionRemarks")
                         .HasColumnType("text");
@@ -308,7 +307,7 @@ namespace ScadaIssuesPortal.Web.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("timestamp without time zone")
-                        .HasDefaultValue(new DateTime(2019, 12, 4, 12, 59, 0, 623, DateTimeKind.Local).AddTicks(3623));
+                        .HasDefaultValue(new DateTime(2019, 12, 4, 12, 23, 4, 232, DateTimeKind.Local).AddTicks(1004));
 
                     b.HasKey("Id");
 

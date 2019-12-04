@@ -1,0 +1,59 @@
+﻿@model ScadaIssuesPortal.Core.Entities.CaseItemTemplate
+@{
+    ViewData["Title"] = "Add Reporting Case Item";
+}
+
+<div class="row justify-content-center align-items-center">
+    <div class="col col-md-8 col-lg-8 col-xl-6">
+        <h2>@ViewData["Title"]</h2>
+        <form method="post">
+            <hr />
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="SerialNum"></label>
+                <input asp-for="SerialNum" class="form-control" />
+                <span asp-validation-for="SerialNum" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Question"></label>
+                <input asp-for="Question" class="form-control" />
+                <span asp-validation-for="Question" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ResponseType" class="control-label"></label>
+                <select asp-for="ResponseType" class="form-control" asp-items="ViewBag.ResponseTypeId"></select>
+                <span asp-validation-for="ResponseType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IsResponseRequired"></label>
+                <input asp-for="IsResponseRequired" class="form-control" />
+                <span asp-validation-for="IsResponseRequired" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-success">Add Reporting Case Item</button>
+        </form>
+
+        <form method="post" action="AddOption">
+            <div class="form-group">
+                <label asp-for="Options" class="control-label"></label>
+                <ol>
+                    @foreach (var optObj in Model.Options)
+                    {
+                        <li>@optObj.OptionText</li>
+                    }
+                </ol>
+                <input asp-for="Id" class="form-control" hidden/>
+                <div class="form-group">
+                    <input asp-for="Question" class="form-control" />
+                    <span asp-validation-for="Question" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-success">Add Option</button>
+            </div>
+        </form>
+
+        <a asp-action="Index">Back to List</a>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

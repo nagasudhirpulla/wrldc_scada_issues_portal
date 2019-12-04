@@ -1,6 +1,6 @@
 ﻿namespace ScadaIssuesPortal.Core.Entities
 {
-    public enum SurveyResponseType
+    public enum ResponseType
     {
         ShortText,
         LongText,

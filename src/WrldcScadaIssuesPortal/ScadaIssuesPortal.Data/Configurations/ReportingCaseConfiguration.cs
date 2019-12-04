@@ -5,7 +5,7 @@ using System;
 
 namespace ScadaIssuesPortal.Data.Configurations
 {
-    public class SurveyCaseConfiguration : IEntityTypeConfiguration<ReportingCase>
+    public class ReportingCaseConfiguration : IEntityTypeConfiguration<ReportingCase>
     {
         public void Configure(EntityTypeBuilder<ReportingCase> builder)
         {

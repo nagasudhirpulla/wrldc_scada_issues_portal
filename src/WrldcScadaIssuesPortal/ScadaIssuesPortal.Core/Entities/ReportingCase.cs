@@ -1,7 +1,6 @@
 ﻿using ScadaIssuesPortal.Core.Interfaces;
 using System;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Identity;
 
 namespace ScadaIssuesPortal.Core.Entities
 {
@@ -9,8 +8,7 @@ namespace ScadaIssuesPortal.Core.Entities
     {
         public ICollection<CaseItem> SurveyItems { get; set; } = new List<CaseItem>();
 
-        public IdentityUser ConcernedAgency { get; set; }
-        public string ConcernedAgencyId { get; set; }
+        public ICollection<ReportingCaseConcerned> ConcernedAgencies { get; set; } = new List<ReportingCaseConcerned>();
 
         public DateTime ResolutionTime { get; set; }
         public string ResolutionRemarks { get; set; }

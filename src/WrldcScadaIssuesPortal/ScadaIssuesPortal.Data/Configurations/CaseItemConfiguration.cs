@@ -7,7 +7,7 @@ using System.Text;
 
 namespace ScadaIssuesPortal.Data.Configurations
 {
-    public class SurveyItemConfiguration : IEntityTypeConfiguration<CaseItem>
+    public class CaseItemConfiguration : IEntityTypeConfiguration<CaseItem>
     {
         public void Configure(EntityTypeBuilder<CaseItem> builder)
         {

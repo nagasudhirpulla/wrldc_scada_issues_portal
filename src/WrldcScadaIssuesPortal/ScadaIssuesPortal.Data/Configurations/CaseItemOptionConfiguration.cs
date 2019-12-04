@@ -4,13 +4,17 @@ using ScadaIssuesPortal.Core.Entities;
 
 namespace ScadaIssuesPortal.Data.Configurations
 {
-    public class SurveyOptionConfiguration : IEntityTypeConfiguration<CaseItemOption>
+    public class CaseItemOptionConfiguration : IEntityTypeConfiguration<CaseItemOption>
     {
         public void Configure(EntityTypeBuilder<CaseItemOption> builder)
         {
             builder
             .HasIndex(b => new { b.OptionText, b.CaseItemId })
             .IsUnique();
+
+            builder
+            .Property(b => b.SerialNum)
+            .HasDefaultValue(1);
         }
     }
 }

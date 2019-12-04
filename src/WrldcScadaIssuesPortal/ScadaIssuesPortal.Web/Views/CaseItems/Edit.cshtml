@@ -29,26 +29,23 @@
                 <input asp-for="IsResponseRequired" class="form-control" />
                 <span asp-validation-for="IsResponseRequired" class="text-danger"></span>
             </div>
-            <button type="submit" class="btn btn-success">Add Reporting Case Item</button>
+            <button type="submit" class="btn btn-success">Edit Reporting Case Item</button>
         </form>
 
-        <form method="post" action="AddOption">
+        <div class="form-group">
+            <label asp-for="Options" class="control-label"></label>
+            <ol>
+                @foreach (var optObj in Model.Options)
+                {
+                    <li>@optObj.OptionText</li>
+                }
+            </ol>
+            <input name="caseItemTemplateId" id="caseItemTemplateId" type="hidden" value="@Model.Id" />
             <div class="form-group">
-                <label asp-for="Options" class="control-label"></label>
-                <ol>
-                    @foreach (var optObj in Model.Options)
-                    {
-                        <li>@optObj.OptionText</li>
-                    }
-                </ol>
-                <input asp-for="Id" class="form-control" hidden/>
-                <div class="form-group">
-                    <input asp-for="Question" class="form-control" />
-                    <span asp-validation-for="Question" class="text-danger"></span>
-                </div>
-                <button type="submit" class="btn btn-success">Add Option</button>
+                <input name="newOptionText" id="newOptionText" class="form-control" />
             </div>
-        </form>
+            <button class="btn btn-sm btn-success" onclick="addOption()">Add Option</button>
+        </div>
 
         <a asp-action="Index">Back to List</a>
     </div>

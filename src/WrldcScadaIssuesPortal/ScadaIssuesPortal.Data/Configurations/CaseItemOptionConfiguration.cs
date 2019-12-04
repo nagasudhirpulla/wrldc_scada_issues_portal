@@ -9,7 +9,7 @@ namespace ScadaIssuesPortal.Data.Configurations
         public void Configure(EntityTypeBuilder<CaseItemOption> builder)
         {
             builder
-            .HasIndex(b => new { b.OptionText, b.CaseItemId })
+            .HasIndex(b => new { b.OptionText, b.CaseItemTemplateId })
             .IsUnique();
 
             builder

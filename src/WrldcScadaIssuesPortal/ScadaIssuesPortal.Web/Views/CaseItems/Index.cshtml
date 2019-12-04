@@ -1,10 +1,47 @@
-﻿@{
+﻿@model ScadaIssuesPortal.Web.Models.CaseItemTemplateListVM
+
+@{
     ViewData["Title"] = "Reporting Case Items";
 }
 
-<div class="text-center">
-    <h1 class="display-4">@ViewData["Title"]</h1>
-    <p>
-        <a asp-action="Create">Create New</a>
-    </p>
-</div>
+@if (Model != null && Model.CaseItemTemplates != null)
+{
+    <div class="row justify-content-center align-items-center">
+        <div class="col col-md-10 col-lg-10">
+            <h2>@ViewData["Title"]</h2>
+            <hr />
+            <table class="table table-bordered table-hover">
+                <thead class="thead-light">
+                    <tr>
+                        <th>S.No</th>
+                        <th>Question</th>
+                        <th>Response Type</th>
+                        <th>IsResponseRequired</th>
+                        <th>Options</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var caseTempl in Model.CaseItemTemplates)
+                    {
+                        <tr>
+                            <td>@caseTempl.SerialNum</td>
+                            <td>@caseTempl.Question</td>
+                            <td>@caseTempl.ResponseType</td>
+                            <td>@caseTempl.IsResponseRequired</td>
+                            <td>@(caseTempl.Options.Count > 0 ? caseTempl.Options.OrderBy(o => o.SerialNum).Select(o => o.OptionText).Aggregate((i, j) => i + ", " + j) : "")</td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@caseTempl.Id">Edit</a> |
+                                <a asp-action="Delete" asp-route-id="@caseTempl.Id">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <br />
+            <p>
+                <a asp-action="Create">Create New</a>
+            </p>
+        </div>
+
+    </div>
+}

@@ -31,6 +31,25 @@
             </div>
             <button type="submit" class="btn btn-success">Add Reporting Case Item</button>
         </form>
+
+        <form method="post" action="AddOption">
+            <div class="form-group">
+                <label asp-for="Options" class="control-label"></label>
+                <ol>
+                    @foreach (var optObj in Model.Options)
+                    {
+                        <li>@optObj.OptionText</li>
+                    }
+                </ol>
+                <input asp-for="Id" class="form-control" hidden/>
+                <div class="form-group">
+                    <input asp-for="Question" class="form-control" />
+                    <span asp-validation-for="Question" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-success">Add Option</button>
+            </div>
+        </form>
+
         <a asp-action="Index">Back to List</a>
     </div>
 </div>

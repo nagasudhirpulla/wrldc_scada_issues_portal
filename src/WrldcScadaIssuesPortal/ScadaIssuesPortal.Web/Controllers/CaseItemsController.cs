@@ -74,19 +74,26 @@ namespace ScadaIssuesPortal.Web.Controllers
             {
                 return NotFound();
             }
-            CaseItemTemplate templ = await _context.CaseItemTemplates.Include(ci => ci.Options).SingleOrDefaultAsync(ci => ci.Id == id);
+            CaseItemTemplate templ = await _context.CaseItemTemplates.SingleOrDefaultAsync(ci => ci.Id == id);
+            templ.Options = await _context.CaseItemOptions.Where(o => o.CaseItemTemplateId == id).OrderBy(o => o.SerialNum).ToListAsync();
             if (templ == null)
             {
                 return NotFound();
             }
+
+            CaseItemTemplateEditVM vm = new CaseItemTemplateEditVM()
+            {
+                ItemTemplate = templ
+            };
+
             var resTypes = Enum.GetValues(typeof(ResponseType)).Cast<ResponseType>().Select(v => v.ToString());
             ViewData["ResponseTypeId"] = new SelectList(resTypes, templ.ResponseType.ToString());
-            return View(templ);
+            return View(vm);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, CaseItemTemplate vm)
+        public async Task<IActionResult> Edit(int id, CaseItemTemplateEditVM vm)
         {
             if (ModelState.IsValid)
             {
@@ -97,11 +104,11 @@ namespace ScadaIssuesPortal.Web.Controllers
                 }
 
                 // update object as per user changes
-                templ.Question = vm.Question;
-                templ.ResponseType = vm.ResponseType;
-                templ.SerialNum = vm.SerialNum;
-                templ.IsResponseRequired = vm.IsResponseRequired;
-                templ.Options = vm.Options;
+                templ.Question = vm.ItemTemplate.Question;
+                templ.ResponseType = vm.ItemTemplate.ResponseType;
+                templ.SerialNum = vm.ItemTemplate.SerialNum;
+                templ.IsResponseRequired = vm.ItemTemplate.IsResponseRequired;
+                //templ.Options = vm.ItemTemplate.Options;
                 try
                 {
                     _context.Update(templ);
@@ -119,10 +126,43 @@ namespace ScadaIssuesPortal.Web.Controllers
                         throw;
                     }
                 }
+
+                // create new option if not null or blank
+                string newOpt = (vm.NewOptionText ?? "").Trim();
+                if (!string.IsNullOrEmpty(newOpt))
+                {
+                    // find the biggest serial number for this CaseItemTemplate - https://stackoverflow.com/questions/7542021/how-to-get-max-value-of-a-column-using-entity-framework
+                    int maxSerNum = 1;
+                    if (_context.CaseItemOptions.Count() > 0)
+                    {
+                        maxSerNum = _context.CaseItemOptions.Select(o => o.SerialNum).Max() + 1;
+                    }
+                    CaseItemOption opt = new CaseItemOption()
+                    {
+                        CaseItemTemplateId = id,
+                        OptionText = newOpt,
+                        SerialNum = maxSerNum
+                    };
+
+                    _context.Add(opt);
+                    int numInserted = await _context.SaveChangesAsync();
+                    if (numInserted == 1)
+                    {
+                        _logger.LogInformation("New Case Item Template Option created");
+                        //return RedirectToAction(nameof(Index));
+                    }
+                    else
+                    {
+                        string msg = $"New Case Item Template Option not created as db returned num insertions as {numInserted}";
+                        _logger.LogInformation(msg);
+                        //todo create custom exception
+                        throw new Exception(msg);
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
             var resTypes = Enum.GetValues(typeof(ResponseType)).Cast<ResponseType>().Select(v => v.ToString());
-            ViewData["ResponseTypeId"] = new SelectList(resTypes, vm.ResponseType.ToString());
+            ViewData["ResponseTypeId"] = new SelectList(resTypes, vm.ItemTemplate.ResponseType.ToString());
             // If we got this far, something failed, redisplay form
             return View(vm);
         }
@@ -157,6 +197,6 @@ namespace ScadaIssuesPortal.Web.Controllers
             _context.CaseItemTemplates.Remove(templ);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }        
+        }
     }
 }

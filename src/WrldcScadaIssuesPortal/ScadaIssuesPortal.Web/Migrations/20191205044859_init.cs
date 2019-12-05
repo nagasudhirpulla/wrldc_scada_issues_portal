@@ -48,6 +48,40 @@ namespace ScadaIssuesPortal.Web.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CaseItemTemplates",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    SerialNum = table.Column<int>(nullable: false, defaultValue: 1),
+                    Question = table.Column<string>(nullable: false),
+                    ResponseType = table.Column<string>(nullable: false, defaultValue: "ShortText"),
+                    IsResponseRequired = table.Column<bool>(nullable: false, defaultValue: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CaseItemTemplates", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ReportingCases",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    DownTime = table.Column<DateTime>(nullable: false),
+                    ResolutionTime = table.Column<DateTime>(nullable: false),
+                    ResolutionRemarks = table.Column<string>(nullable: true),
+                    AdminRemarks = table.Column<string>(nullable: true),
+                    CreatedAt = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2019, 12, 5, 10, 18, 58, 831, DateTimeKind.Local).AddTicks(7380)),
+                    UpdatedAt = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2019, 12, 5, 10, 18, 58, 832, DateTimeKind.Local).AddTicks(4431))
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ReportingCases", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -153,6 +187,75 @@ namespace ScadaIssuesPortal.Web.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "CaseItemOptions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    SerialNum = table.Column<int>(nullable: false, defaultValue: 1),
+                    OptionText = table.Column<string>(nullable: true),
+                    CaseItemTemplateId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CaseItemOptions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CaseItemOptions_CaseItemTemplates_CaseItemTemplateId",
+                        column: x => x.CaseItemTemplateId,
+                        principalTable: "CaseItemTemplates",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ReportingCaseConcerned",
+                columns: table => new
+                {
+                    ReportingCaseId = table.Column<int>(nullable: false),
+                    UserId = table.Column<string>(nullable: false),
+                    Id = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ReportingCaseConcerned", x => new { x.ReportingCaseId, x.UserId });
+                    table.ForeignKey(
+                        name: "FK_ReportingCaseConcerned_ReportingCases_ReportingCaseId",
+                        column: x => x.ReportingCaseId,
+                        principalTable: "ReportingCases",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ReportingCaseConcerned_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ReportingCaseItems",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CaseId = table.Column<int>(nullable: false),
+                    SerialNum = table.Column<int>(nullable: false, defaultValue: 1),
+                    Question = table.Column<string>(nullable: false),
+                    Response = table.Column<string>(nullable: true),
+                    ResponseType = table.Column<string>(nullable: false, defaultValue: "ShortText")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ReportingCaseItems", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ReportingCaseItems_ReportingCases_CaseId",
+                        column: x => x.CaseId,
+                        principalTable: "ReportingCases",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -189,6 +292,39 @@ namespace ScadaIssuesPortal.Web.Migrations
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CaseItemOptions_CaseItemTemplateId",
+                table: "CaseItemOptions",
+                column: "CaseItemTemplateId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CaseItemOptions_OptionText_CaseItemTemplateId",
+                table: "CaseItemOptions",
+                columns: new[] { "OptionText", "CaseItemTemplateId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CaseItemTemplates_Question",
+                table: "CaseItemTemplates",
+                column: "Question",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ReportingCaseConcerned_UserId",
+                table: "ReportingCaseConcerned",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ReportingCaseItems_CaseId",
+                table: "ReportingCaseItems",
+                column: "CaseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ReportingCaseItems_Question",
+                table: "ReportingCaseItems",
+                column: "Question",
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -209,10 +345,25 @@ namespace ScadaIssuesPortal.Web.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "CaseItemOptions");
+
+            migrationBuilder.DropTable(
+                name: "ReportingCaseConcerned");
+
+            migrationBuilder.DropTable(
+                name: "ReportingCaseItems");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
+                name: "CaseItemTemplates");
+
+            migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "ReportingCases");
         }
     }
 }

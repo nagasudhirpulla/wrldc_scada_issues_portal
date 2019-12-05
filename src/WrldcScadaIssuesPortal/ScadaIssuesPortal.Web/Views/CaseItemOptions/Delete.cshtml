@@ -1,0 +1,23 @@
+﻿@model ScadaIssuesPortal.Core.Entities.CaseItemOption
+@{
+    ViewData["Title"] = "Delete Reporting Case Item Template Option";
+}
+
+@if (Model != null)
+{
+    <div class="row justify-content-center align-items-center">
+        <div class="col col-md-10 col-lg-8 col-xl-6">
+            <h2>@ViewData["Title"]</h2>
+            <hr />
+            <h3>Are you sure you want to delete this option</h3>
+            <h3>@Model.OptionText ?</h3>
+            <div>
+                <form asp-action="Delete">
+                    <input type="hidden" asp-for="Id" />
+                    <input type="submit" value="Delete" class="btn btn-danger" /> |
+                    <a asp-controller="CaseItems" asp-action="Edit" asp-route-id="@Model.CaseItemTemplateId">Back</a>
+                </form>
+            </div>
+        </div>
+    </div>
+}

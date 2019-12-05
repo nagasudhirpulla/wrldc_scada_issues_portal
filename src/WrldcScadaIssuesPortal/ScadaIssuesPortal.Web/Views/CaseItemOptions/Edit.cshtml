@@ -1,0 +1,31 @@
+﻿@model ScadaIssuesPortal.Core.Entities.CaseItemOption
+@{
+    ViewData["Title"] = "Edit Reporting Case Item";
+}
+
+<div class="row justify-content-center align-items-center">
+    <div class="col col-md-8 col-lg-8 col-xl-6">
+        <h2>@ViewData["Title"]</h2>
+        <form method="post">
+            <hr />
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="SerialNum"></label>
+                <input asp-for="SerialNum" class="form-control" />
+                <span asp-validation-for="SerialNum" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="OptionText"></label>
+                <input asp-for="OptionText" class="form-control" />
+                <span asp-validation-for="OptionText" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-success">Save Changes</button>
+        </form>
+
+        <a asp-controller="CaseItems" asp-action="Edit" asp-route-id="@Model.CaseItemTemplateId">Back</a>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

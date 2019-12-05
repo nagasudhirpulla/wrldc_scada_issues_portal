@@ -10,8 +10,8 @@ using ScadaIssuesPortal.Data;
 namespace ScadaIssuesPortal.Web.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191204171457_caseItemTemplateOptCorrection")]
-    partial class caseItemTemplateOptCorrection
+    [Migration("20191205044859_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -291,7 +291,7 @@ namespace ScadaIssuesPortal.Web.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
-                        .HasDefaultValue(new DateTime(2019, 12, 4, 22, 44, 56, 513, DateTimeKind.Local).AddTicks(3149));
+                        .HasDefaultValue(new DateTime(2019, 12, 5, 10, 18, 58, 831, DateTimeKind.Local).AddTicks(7380));
 
                     b.Property<DateTime>("DownTime")
                         .HasColumnType("timestamp without time zone");
@@ -305,7 +305,7 @@ namespace ScadaIssuesPortal.Web.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("timestamp without time zone")
-                        .HasDefaultValue(new DateTime(2019, 12, 4, 22, 44, 56, 514, DateTimeKind.Local).AddTicks(6030));
+                        .HasDefaultValue(new DateTime(2019, 12, 5, 10, 18, 58, 832, DateTimeKind.Local).AddTicks(4431));
 
                     b.HasKey("Id");
 

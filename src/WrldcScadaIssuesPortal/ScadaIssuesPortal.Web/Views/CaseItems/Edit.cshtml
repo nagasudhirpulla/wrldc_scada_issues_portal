@@ -1,6 +1,6 @@
-﻿@model ScadaIssuesPortal.Core.Entities.CaseItemTemplate
+﻿@model ScadaIssuesPortal.Web.Models.CaseItemTemplateEditVM
 @{
-    ViewData["Title"] = "Add Reporting Case Item";
+    ViewData["Title"] = "Edit Reporting Case Item";
 }
 
 <div class="row justify-content-center align-items-center">
@@ -10,42 +10,39 @@
             <hr />
             <div asp-validation-summary="All" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="SerialNum"></label>
-                <input asp-for="SerialNum" class="form-control" />
-                <span asp-validation-for="SerialNum" class="text-danger"></span>
+                <label asp-for="ItemTemplate.SerialNum"></label>
+                <input asp-for="ItemTemplate.SerialNum" class="form-control" />
+                <span asp-validation-for="ItemTemplate.SerialNum" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Question"></label>
-                <input asp-for="Question" class="form-control" />
-                <span asp-validation-for="Question" class="text-danger"></span>
+                <label asp-for="ItemTemplate.Question"></label>
+                <input asp-for="ItemTemplate.Question" class="form-control" />
+                <span asp-validation-for="ItemTemplate.Question" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ResponseType" class="control-label"></label>
-                <select asp-for="ResponseType" class="form-control" asp-items="ViewBag.ResponseTypeId"></select>
-                <span asp-validation-for="ResponseType" class="text-danger"></span>
+                <label asp-for="ItemTemplate.ResponseType" class="control-label"></label>
+                <select asp-for="ItemTemplate.ResponseType" class="form-control" asp-items="ViewBag.ResponseTypeId"></select>
+                <span asp-validation-for="ItemTemplate.ResponseType" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="IsResponseRequired"></label>
-                <input asp-for="IsResponseRequired" class="form-control" />
-                <span asp-validation-for="IsResponseRequired" class="text-danger"></span>
+                <label asp-for="ItemTemplate.IsResponseRequired"></label>
+                <input asp-for="ItemTemplate.IsResponseRequired" class="form-control" />
+                <span asp-validation-for="ItemTemplate.IsResponseRequired" class="text-danger"></span>
             </div>
-            <button type="submit" class="btn btn-success">Edit Reporting Case Item</button>
-        </form>
-
-        <div class="form-group">
-            <label asp-for="Options" class="control-label"></label>
-            <ol>
-                @foreach (var optObj in Model.Options)
+            <div class="form-group">
+                @for (int optIter = 0; optIter < Model.ItemTemplate.Options.Count; optIter++)
                 {
-                    <li>@optObj.OptionText</li>
+                    <div>
+                        <span>@(Model.ItemTemplate.Options.ElementAt(optIter).OptionText)</span> | 
+                        <a asp-controller="CaseItemOptions" asp-action="Edit" asp-route-id="@Model.ItemTemplate.Options.ElementAt(optIter).Id">Edit</a> | 
+                        <a asp-controller="CaseItemOptions" asp-action="Delete" asp-route-id="@Model.ItemTemplate.Options.ElementAt(optIter).Id">Delete</a>
+                    </div>
                 }
-            </ol>
-            <input name="caseItemTemplateId" id="caseItemTemplateId" type="hidden" value="@Model.Id" />
-            <div class="form-group">
-                <input name="newOptionText" id="newOptionText" class="form-control" />
+                <label asp-for="NewOptionText"></label>
+                <input asp-for="NewOptionText" class="form-control" />
             </div>
-            <button class="btn btn-sm btn-success" onclick="addOption()">Add Option</button>
-        </div>
+            <button type="submit" class="btn btn-success">Save Changes</button>
+        </form>
 
         <a asp-action="Index">Back to List</a>
     </div>

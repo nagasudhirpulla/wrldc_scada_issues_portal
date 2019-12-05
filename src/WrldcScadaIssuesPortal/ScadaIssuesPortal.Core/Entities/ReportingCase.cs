@@ -6,9 +6,9 @@ namespace ScadaIssuesPortal.Core.Entities
 {
     public class ReportingCase : BaseEntity, IAggregateRoot
     {
-        public ICollection<ReportingCaseItem> CaseItems { get; set; } = new List<ReportingCaseItem>();
+        public List<ReportingCaseItem> CaseItems { get; set; } = new List<ReportingCaseItem>();
 
-        public ICollection<ReportingCaseConcerned> ConcernedAgencies { get; set; } = new List<ReportingCaseConcerned>();
+        public List<ReportingCaseConcerned> ConcernedAgencies { get; set; } = new List<ReportingCaseConcerned>();
 
         public DateTime DownTime { get; set; }
         public DateTime ResolutionTime { get; set; }

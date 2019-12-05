@@ -33,9 +33,16 @@ namespace ScadaIssuesPortal.Web.Controllers
             return View(vm);
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
             CaseItemTemplate vm = new CaseItemTemplate();
+            // get the largest serial number
+            int serNum = 1;
+            if (_context.CaseItemTemplates.Count() > 0)
+            {
+                serNum = await _context.CaseItemTemplates.MaxAsync(ci => ci.SerialNum) + 1;
+            }
+            vm.SerialNum = serNum;
             var resTypes = Enum.GetValues(typeof(ResponseType)).Cast<ResponseType>().Select(v => v.ToString());
             ViewData["ResponseTypeId"] = new SelectList(resTypes, ResponseType.ShortText.ToString());
             return View(vm);

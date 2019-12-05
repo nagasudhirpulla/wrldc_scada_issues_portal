@@ -12,10 +12,6 @@ namespace ScadaIssuesPortal.Data.Configurations
         public void Configure(EntityTypeBuilder<ReportingCaseItem> builder)
         {
             builder
-            .HasIndex(b => b.Question)
-            .IsUnique();
-
-            builder
             .Property(b => b.ResponseType)
             .HasDefaultValue(ResponseType.ShortText);
 

@@ -1,0 +1,89 @@
+﻿@model ScadaIssuesPortal.Web.Models.ReportingCaseCreateVM
+@using ScadaIssuesPortal.Core.Entities
+@{
+    ViewData["Title"] = "Register New Issue";
+}
+
+<div class="row justify-content-center align-items-center">
+    <div class="col col-md-4 col-lg-4 col-xl-3">
+        <h2>@ViewData["Title"]</h2>
+        <form method="post">
+            <hr />
+            <div class="form-group">
+                <label asp-for="DownTime"></label>
+                <input asp-for="DownTime" class="form-control datetimepicker" />
+                <span asp-validation-for="DownTime" class="text-danger"></span>
+            </div>
+            @if (Model.CaseItems.Count > 0)
+            {
+                @for (int caseIter = 0; caseIter < Model.CaseItems.Count; caseIter++)
+                {
+                    <input asp-for="CaseItems[caseIter].Id" type="hidden" />
+                    <input asp-for="CaseItems[caseIter].Question" type="hidden" />
+                    <input asp-for="CaseItems[caseIter].SerialNum" type="hidden" />
+                    <input asp-for="CaseItems[caseIter].ResponseType" type="hidden" />
+                    ResponseType inpType = Model.CaseItems[caseIter].ResponseType;
+                    <div class="form-group">
+                        <h3>@Model.CaseItems[caseIter].Question</h3>
+                        @if (inpType == ResponseType.ShortText)
+                        {
+                            <input asp-for="Responses[caseIter]" class="form-control" required="@Model.CaseItems[caseIter].IsResponseRequired" />
+                            <input asp-for="ChoiceTexts[caseIter]" type="hidden" />
+                        }
+                        else if (inpType == ResponseType.LongText)
+                        {
+                            <textarea asp-for="Responses[caseIter]" class="form-control" required="@Model.CaseItems[caseIter].IsResponseRequired"> </textarea>
+                            <input asp-for="ChoiceTexts[caseIter]" type="hidden" />
+                        }
+                        else if (inpType == ResponseType.DateTime)
+                        {
+                            <input asp-for="Responses[caseIter]" class="form-control datetimepicker" required="@Model.CaseItems[caseIter].IsResponseRequired" />
+                            <input asp-for="ChoiceTexts[caseIter]" type="hidden" />
+                        }
+                        else if (inpType == ResponseType.Choices)
+                        {
+                            <select asp-for="Responses[caseIter]" class="form-control">
+                                @foreach (var opt in Model.CaseItems[caseIter].Options.OrderBy(o => o.SerialNum))
+                                {
+                                    <option value="@opt.OptionText">@opt.OptionText</option>
+                                }
+                            </select>
+                            <input asp-for="ChoiceTexts[caseIter]" type="hidden" />
+                        }
+                        else if (inpType == ResponseType.ChoicesWithText)
+                        {
+                            <select asp-for="Responses[caseIter]" class="form-control">
+                                @foreach (var opt in Model.CaseItems[caseIter].Options.OrderBy(o => o.SerialNum))
+                                {
+                                    <option value="@opt.OptionText">@opt.OptionText</option>
+                                }
+                            </select>
+                            <span>Other - </span>
+                            <input asp-for="ChoiceTexts[caseIter]" class="form-control" style="display:inline-block;width:20em" />
+                        }
+                        <span asp-validation-for="Responses[caseIter]" class="text-danger"></span>
+                    </div>
+                }
+                <div class="form-group">
+                    <label asp-for="ConcernedAgencyId" class="control-label"></label>
+                    <select asp-for="ConcernedAgencyId" class="form-control" asp-items="ViewBag.UserId"></select>
+                    <span asp-validation-for="ConcernedAgencyId" class="text-danger"></span>
+                </div>
+            }
+            <button type="submit" class="btn btn-success">Create New Issue</button>
+        </form>
+        <a asp-action="Index">Back to List</a>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script>
+        $(".datetimepicker").flatpickr({
+            enableTime: true,
+            dateFormat: "Y-m-d H:i",
+        });
+    </script>
+}

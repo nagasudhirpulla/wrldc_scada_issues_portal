@@ -24,9 +24,14 @@ namespace ScadaIssuesPortal.Web.Controllers
             _context = dbContext;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var vm = await _context.ReportingCases
+                            .Include(rc => rc.CaseItems)
+                            .Include(rc => rc.ConcernedAgencies)
+                            .ThenInclude(ca => ca.User)
+                            .OrderByDescending(rc => rc.CreatedAt).ToListAsync();
+            return View(vm);
         }
 
         public async Task<IActionResult> Create()

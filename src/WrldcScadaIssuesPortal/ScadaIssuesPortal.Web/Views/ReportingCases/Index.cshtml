@@ -1,10 +1,85 @@
-﻿@{
+﻿@model List<ScadaIssuesPortal.Core.Entities.ReportingCase>
+@using ScadaIssuesPortal.Core;
+@{
     ViewData["Title"] = "Reporting Cases";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>
-        <a asp-controller="ReportingCases" asp-action="Create">Report New Issue</a>
-    </p>
-</div>
+<p>
+    <a asp-controller="ReportingCases" asp-action="Create">Report New Issue</a>
+</p>
+
+<table class="table table-bordered table-hover table-responsive-md">
+    <thead>
+        <tr>
+            <th>
+                Creation Time
+            </th>
+            <th>
+                Issue Time
+            </th>
+            <th>
+                Case Info
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].ResolutionTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].ResolutionRemarks)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].ConcernedAgencies)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].AdminRemarks)
+            </th>
+            <th>
+                Last Updated Time
+            </th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @item.CreatedAt.ToString("dd MMM yyyy HH:mm")
+                </td>
+                <td>
+                    @item.DownTime.ToString("dd MMM yyyy HH:mm")
+                </td>
+                <td>
+                    @foreach (var caseItem in item.CaseItems)
+                    {
+                        <span>
+                            @($"{caseItem.Question} - {caseItem.Response}")
+                        </span>
+                        <br>
+                    }
+                </td>
+                <td>
+                    @item.ResolutionTime.ToString("dd-MMM-yyyy HH:mm")
+                </td>
+                <td>
+                    @item.ResolutionRemarks
+                </td>
+                <td>
+                    @(item.ConcernedAgencies.Count > 0 ? item.ConcernedAgencies.Select(concerned => concerned.User.UserName).Aggregate((i, j) => i + ", " + j) : "")
+                </td>
+                <td>
+                    @item.AdminRemarks
+                </td>
+                <td>
+                    @item.UpdatedAt.ToString("dd-MMM-yyyy HH:mm")
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                    @if (User.IsInRole(SecurityConstants.AdminRoleString))
+                    {
+                        <span>|</span><a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

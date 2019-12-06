@@ -75,7 +75,7 @@ namespace ScadaIssuesPortal.Web.Controllers
                         SerialNum = caseItemTemplate.SerialNum,
                         Question = caseItemTemplate.Question,
                         ResponseType = caseItemTemplate.ResponseType,
-                        Response = vm.Responses[caseTemplIter]
+                        Response = resp
                     };
                     caseItems.Add(caseItem);
                 }
@@ -118,5 +118,36 @@ namespace ScadaIssuesPortal.Web.Controllers
             return View(vm);
         }
 
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var repCase = await _context.ReportingCases.FindAsync(id);
+            if (repCase == null)
+            {
+                return NotFound();
+            }
+            return View();
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var repCase = await _context.ReportingCases.FindAsync(id);
+            if (repCase == null)
+            {
+                return NotFound();
+            }
+            _context.ReportingCases.Remove(repCase);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

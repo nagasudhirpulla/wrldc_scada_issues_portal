@@ -12,6 +12,9 @@
     <thead>
         <tr>
             <th>
+                Id
+            </th>
+            <th>
                 Creation Time
             </th>
             <th>
@@ -43,6 +46,9 @@
         {
             <tr>
                 <td>
+                    @item.Id
+                </td>
+                <td>
                     @item.CreatedAt.ToString("dd MMM yyyy HH:mm")
                 </td>
                 <td>
@@ -58,7 +64,7 @@
                     }
                 </td>
                 <td>
-                    @item.ResolutionTime.ToString("dd-MMM-yyyy HH:mm")
+                    @((item.ResolutionTime == default) ? "" : item.ResolutionTime.ToString("dd-MMM-yyyy HH:mm"))
                 </td>
                 <td>
                     @item.ResolutionRemarks

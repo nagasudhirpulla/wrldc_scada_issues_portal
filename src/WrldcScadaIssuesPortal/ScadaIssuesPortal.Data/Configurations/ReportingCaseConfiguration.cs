@@ -12,12 +12,12 @@ namespace ScadaIssuesPortal.Data.Configurations
             // Default value of CreatedAt
             builder
                 .Property(e => e.CreatedAt)
-                .HasDefaultValue(DateTime.Now);
+                .HasDefaultValueSql("NOW()");
 
             // Default value of UpdatedAt and auto update modify
             builder
                 .Property(e => e.UpdatedAt)
-                .HasDefaultValue(DateTime.Now)
+                .HasDefaultValueSql("NOW()")
                 .ValueGeneratedOnAddOrUpdate();
         }
     }

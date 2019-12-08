@@ -3,17 +3,20 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using ScadaIssuesPortal.Core;
 using ScadaIssuesPortal.Core.Entities;
 using ScadaIssuesPortal.Data;
 using ScadaIssuesPortal.Web.Models;
 
 namespace ScadaIssuesPortal.Web.Controllers
 {
+    [Authorize]
     public class ReportingCasesController : Controller
     {
         private readonly ILogger<ReportingCasesController> _logger;
@@ -118,6 +121,85 @@ namespace ScadaIssuesPortal.Web.Controllers
             return View(vm);
         }
 
+        public async Task<IActionResult> Edit(int? id)
+        {
+            // get the reporting case
+            ReportingCase repCase = await _context.ReportingCases.Include(rc => rc.ConcernedAgencies).Include(rc => rc.CaseItems).SingleOrDefaultAsync(rc => rc.Id == id);
+            ReportingCaseEditVM vm = new ReportingCaseEditVM
+            {
+                DownTime = repCase.DownTime,
+                CaseItems = repCase.CaseItems,
+                ConcernedAgencyId = repCase.ConcernedAgencies[0].UserId,
+                ResolutionTime = repCase.ResolutionTime,
+                ResolutionRemarks = repCase.ResolutionRemarks,
+                AdminRemarks = repCase.AdminRemarks
+            };
+            var userList = await _context.Users.ToListAsync();
+            ViewData["userId"] = new SelectList(userList, nameof(IdentityUser.Id), nameof(IdentityUser.UserName));
+            return View(vm);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, ReportingCaseEditVM vm)
+        {
+            if (ModelState.IsValid)
+            {
+                // get the reporting case
+                ReportingCase repCase = await _context.ReportingCases.Include(rc => rc.ConcernedAgencies).SingleOrDefaultAsync(rc => rc.Id == id);
+                if (repCase == null)
+                {
+                    return NotFound();
+                }
+                // update the reporting case
+                repCase.AdminRemarks = vm.AdminRemarks;
+                repCase.ResolutionRemarks = vm.ResolutionRemarks;
+                repCase.ResolutionTime = vm.ResolutionTime;
+                repCase.DownTime = vm.DownTime;
+                repCase.CaseItems = vm.CaseItems;
+                try
+                {
+                    _context.Update(repCase);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    // check if the we are trying to edit was already deleted due to concurrency
+                    if (!_context.ReportingCases.Any(ci => ci.Id == id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+                // get the concerned agency Id
+                ReportingCaseConcerned conc = await _context.ReportingCaseConcerneds.SingleOrDefaultAsync(rcc =>
+                                                    (rcc.UserId == repCase.ConcernedAgencies[0].UserId) &&
+                                                    (rcc.ReportingCaseId == repCase.ConcernedAgencies[0].ReportingCaseId));
+                if (conc.UserId != vm.ConcernedAgencyId)
+                {
+                    _context.ReportingCaseConcerneds.Remove(conc);
+                    await _context.SaveChangesAsync();
+                    ReportingCaseConcerned concerned = new ReportingCaseConcerned()
+                    {
+                        ReportingCaseId = repCase.Id,
+                        UserId = vm.ConcernedAgencyId
+                    };
+                    _context.Add(concerned);
+                    int numInserted = await _context.SaveChangesAsync();
+                }
+
+                return RedirectToAction(nameof(Index));
+            }
+            var userList = await _context.Users.ToListAsync();
+            ViewData["userId"] = new SelectList(userList, nameof(IdentityUser.Id), nameof(IdentityUser.UserName));
+            return View(vm);
+        }
+
+        [Authorize(Roles = SecurityConstants.AdminRoleString)]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -134,6 +216,7 @@ namespace ScadaIssuesPortal.Web.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = SecurityConstants.AdminRoleString)]
         public async Task<IActionResult> DeleteConfirmed(int? id)
         {
             if (id == null)

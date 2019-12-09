@@ -46,11 +46,24 @@
                     <hr />
                 }
                 <div class="form-group">
+                    <label class="question">Agencies</label>
+                    @for (int agIter = 0; agIter < Model.ConcernedAgencies.Count; agIter++)
+                    {
+                        <div>
+                            <span>@Model.ConcernedAgencies[agIter].User.UserName</span> |
+                            <a asp-action="Delete"
+                               asp-controller="ConcernedAgencies"
+                               asp-route-userId="@Model.ConcernedAgencies[agIter].UserId"
+                               asp-route-caseId="@Model.ConcernedAgencies[agIter].ReportingCaseId">Delete</a>
+                        </div>
+                    }
+                </div>
+                <hr />
+                <div class="form-group">
                     <label asp-for="ConcernedAgencyId" class="control-label question"></label>
                     <select asp-for="ConcernedAgencyId" class="form-control" asp-items="ViewBag.UserId"></select>
                     <span asp-validation-for="ConcernedAgencyId" class="text-danger"></span>
                 </div>
-                <hr />
                 <div class="form-group">
                     <label asp-for="ResolutionTime" class="question"></label>
                     <input asp-for="ResolutionTime" class="form-control datetimepicker" />

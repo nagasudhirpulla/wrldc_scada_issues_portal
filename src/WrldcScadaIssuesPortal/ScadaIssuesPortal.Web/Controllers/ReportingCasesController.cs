@@ -20,6 +20,7 @@ namespace ScadaIssuesPortal.Web.Controllers
     [Authorize]
     public class ReportingCasesController : Controller
     {
+        public const string ControllerPath = "ReportingCases";
         private readonly ILogger<ReportingCasesController> _logger;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ApplicationDbContext _context;
@@ -34,10 +35,10 @@ namespace ScadaIssuesPortal.Web.Controllers
         {
             // check if user is admin
             bool isAdmin = User.IsInRole(SecurityConstants.AdminRoleString);
-            
+
             // get user id
             string userId = _userManager.GetUserId(User);
-            
+
             // show only issues which the logged in user is concerned with
             var vm = await _context.ReportingCases
                             .Include(rc => rc.CaseItems)
@@ -135,16 +136,23 @@ namespace ScadaIssuesPortal.Web.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             // get the reporting case
-            ReportingCase repCase = await _context.ReportingCases.Include(rc => rc.ConcernedAgencies).Include(rc => rc.CaseItems).SingleOrDefaultAsync(rc => rc.Id == id);
+            ReportingCase repCase = await _context.ReportingCases.Include(rc => rc.ConcernedAgencies)
+                                            .ThenInclude(ca => ca.User)
+                                            .Include(rc => rc.CaseItems)
+                                            .SingleOrDefaultAsync(rc => rc.Id == id);
             ReportingCaseEditVM vm = new ReportingCaseEditVM
             {
                 DownTime = repCase.DownTime,
                 CaseItems = repCase.CaseItems,
-                ConcernedAgencyId = repCase.ConcernedAgencies[0].UserId,
                 ResolutionTime = repCase.ResolutionTime,
                 ResolutionRemarks = repCase.ResolutionRemarks,
-                AdminRemarks = repCase.AdminRemarks
+                AdminRemarks = repCase.AdminRemarks,
+                ConcernedAgencies = repCase.ConcernedAgencies
             };
+            if (repCase.ConcernedAgencies.Count > 0)
+            {
+                vm.ConcernedAgencyId = repCase.ConcernedAgencies[0].UserId;
+            }
             var userList = await _context.Users.ToListAsync();
             ViewData["userId"] = new SelectList(userList, nameof(IdentityUser.Id), nameof(IdentityUser.UserName));
             return View(vm);
@@ -157,7 +165,8 @@ namespace ScadaIssuesPortal.Web.Controllers
             if (ModelState.IsValid)
             {
                 // get the reporting case
-                ReportingCase repCase = await _context.ReportingCases.Include(rc => rc.ConcernedAgencies).SingleOrDefaultAsync(rc => rc.Id == id);
+                ReportingCase repCase = await _context.ReportingCases.Include(rc => rc.ConcernedAgencies)
+                                                .SingleOrDefaultAsync(rc => rc.Id == id);
                 if (repCase == null)
                 {
                     return NotFound();
@@ -186,14 +195,14 @@ namespace ScadaIssuesPortal.Web.Controllers
                     }
                 }
 
-                // get the concerned agency Id
-                ReportingCaseConcerned conc = await _context.ReportingCaseConcerneds.SingleOrDefaultAsync(rcc =>
-                                                    (rcc.UserId == repCase.ConcernedAgencies[0].UserId) &&
-                                                    (rcc.ReportingCaseId == repCase.ConcernedAgencies[0].ReportingCaseId));
-                if (conc.UserId != vm.ConcernedAgencyId)
+                // get the concerned agency Ids
+                List<string> concernedUserIds = await _context.ReportingCaseConcerneds
+                                                    .Where(rcc => rcc.ReportingCaseId == id)
+                                                    .Select(rcc => rcc.UserId).ToListAsync();
+                if (!concernedUserIds.Any(usr => usr == vm.ConcernedAgencyId))
                 {
-                    _context.ReportingCaseConcerneds.Remove(conc);
-                    await _context.SaveChangesAsync();
+                    // _context.ReportingCaseConcerneds.Remove(conc);
+                    // await _context.SaveChangesAsync();
                     ReportingCaseConcerned concerned = new ReportingCaseConcerned()
                     {
                         ReportingCaseId = repCase.Id,

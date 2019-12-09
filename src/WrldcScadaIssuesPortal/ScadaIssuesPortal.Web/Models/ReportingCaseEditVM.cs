@@ -7,6 +7,7 @@ namespace ScadaIssuesPortal.Web.Models
     public class ReportingCaseEditVM
     {
         public List<ReportingCaseItem> CaseItems { get; set; } = new List<ReportingCaseItem>();
+        public List<ReportingCaseConcerned> ConcernedAgencies { get; set; } = new List<ReportingCaseConcerned>();
         public string ConcernedAgencyId { get; set; }
         public DateTime DownTime { get; set; }
         public DateTime ResolutionTime { get; set; }

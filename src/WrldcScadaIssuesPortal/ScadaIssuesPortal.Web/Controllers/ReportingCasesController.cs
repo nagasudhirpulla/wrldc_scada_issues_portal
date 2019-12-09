@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -20,22 +21,29 @@ namespace ScadaIssuesPortal.Web.Controllers
     public class ReportingCasesController : Controller
     {
         private readonly ILogger<ReportingCasesController> _logger;
+        private readonly UserManager<IdentityUser> _userManager;
         private readonly ApplicationDbContext _context;
-        public ReportingCasesController(ILogger<ReportingCasesController> logger, ApplicationDbContext dbContext)
+        public ReportingCasesController(ILogger<ReportingCasesController> logger, ApplicationDbContext dbContext, UserManager<IdentityUser> userManager)
         {
+            _userManager = userManager;
             _logger = logger;
             _context = dbContext;
         }
 
         public async Task<IActionResult> Index()
         {
-            //check if user is admin
+            // check if user is admin
             bool isAdmin = User.IsInRole(SecurityConstants.AdminRoleString);
+            
             // get user id
+            string userId = _userManager.GetUserId(User);
+            
+            // show only issues which the logged in user is concerned with
             var vm = await _context.ReportingCases
                             .Include(rc => rc.CaseItems)
                             .Include(rc => rc.ConcernedAgencies)
                             .ThenInclude(ca => ca.User)
+                            .Where(rc => isAdmin || rc.ConcernedAgencies.Any(ca => ca.UserId == userId))
                             .OrderByDescending(rc => rc.CreatedAt).ToListAsync();
             return View(vm);
         }

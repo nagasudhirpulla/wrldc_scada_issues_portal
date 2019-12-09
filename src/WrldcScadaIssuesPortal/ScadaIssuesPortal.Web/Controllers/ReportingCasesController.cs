@@ -29,6 +29,9 @@ namespace ScadaIssuesPortal.Web.Controllers
 
         public async Task<IActionResult> Index()
         {
+            //check if user is admin
+            bool isAdmin = User.IsInRole(SecurityConstants.AdminRoleString);
+            // get user id
             var vm = await _context.ReportingCases
                             .Include(rc => rc.CaseItems)
                             .Include(rc => rc.ConcernedAgencies)

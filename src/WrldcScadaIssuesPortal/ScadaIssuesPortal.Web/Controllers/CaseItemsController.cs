@@ -11,6 +11,7 @@ using ScadaIssuesPortal.Core;
 using ScadaIssuesPortal.Core.Entities;
 using ScadaIssuesPortal.Data;
 using ScadaIssuesPortal.Web.Models;
+using ScadaIssuesPortal.Web.Extensions;
 
 namespace ScadaIssuesPortal.Web.Controllers
 {
@@ -61,7 +62,7 @@ namespace ScadaIssuesPortal.Web.Controllers
                 {
                     _logger.LogInformation("New Case Item Template created");
 
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction(nameof(Index)).WithSuccess("New Case Item Template created");
                 }
                 else
                 {
@@ -166,7 +167,7 @@ namespace ScadaIssuesPortal.Web.Controllers
                         throw new Exception(msg);
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index)).WithSuccess("Case Item Editing done");
             }
             var resTypes = Enum.GetValues(typeof(ResponseType)).Cast<ResponseType>().Select(v => v.ToString());
             ViewData["ResponseTypeId"] = new SelectList(resTypes, vm.ItemTemplate.ResponseType.ToString());
@@ -203,7 +204,7 @@ namespace ScadaIssuesPortal.Web.Controllers
             }
             _context.CaseItemTemplates.Remove(templ);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index)).WithSuccess("Case Item Deletion done");
         }
     }
 }

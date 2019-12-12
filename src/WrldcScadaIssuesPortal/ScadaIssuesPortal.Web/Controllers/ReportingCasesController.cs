@@ -14,6 +14,7 @@ using ScadaIssuesPortal.Core;
 using ScadaIssuesPortal.Core.Entities;
 using ScadaIssuesPortal.Data;
 using ScadaIssuesPortal.Web.Models;
+using ScadaIssuesPortal.Web.Extensions;
 
 namespace ScadaIssuesPortal.Web.Controllers
 {
@@ -112,7 +113,7 @@ namespace ScadaIssuesPortal.Web.Controllers
                     if (numInserted == 1)
                     {
                         _logger.LogInformation("New Case Concerned agency created");
-                        return RedirectToAction(nameof(Index));
+                        return RedirectToAction(nameof(Index)).WithSuccess("New Issue created");
                     }
                     else
                     {
@@ -212,7 +213,7 @@ namespace ScadaIssuesPortal.Web.Controllers
                     int numInserted = await _context.SaveChangesAsync();
                 }
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index)).WithSuccess("Issue Editing done");
             }
             var userList = await _context.Users.ToListAsync();
             ViewData["userId"] = new SelectList(userList, nameof(IdentityUser.Id), nameof(IdentityUser.UserName));
@@ -250,7 +251,7 @@ namespace ScadaIssuesPortal.Web.Controllers
             }
             _context.ReportingCases.Remove(repCase);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index)).WithSuccess("Issue Deletion done");
         }
     }
 }

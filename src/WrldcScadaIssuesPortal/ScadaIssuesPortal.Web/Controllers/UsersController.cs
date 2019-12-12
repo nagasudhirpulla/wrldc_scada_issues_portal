@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using ScadaIssuesPortal.Web.Extensions;
 
 namespace ScadaIssuesPortal.Web.Controllers
 {
@@ -67,7 +68,7 @@ namespace ScadaIssuesPortal.Web.Controllers
                 {
                     _logger.LogInformation("User created a new account with password.");
 
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction(nameof(Index)).WithSuccess("Created a new user");
                 }
                 AddErrors(result);
             }
@@ -166,7 +167,7 @@ namespace ScadaIssuesPortal.Web.Controllers
                 {
                     _logger.LogInformation("User edit operation successful");
 
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction(nameof(Index)).WithSuccess("User Editing done");
                 }
 
                 AddErrors(identityErrors);
@@ -216,7 +217,7 @@ namespace ScadaIssuesPortal.Web.Controllers
                 {
                     _logger.LogInformation("User deleted successfully");
 
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction(nameof(Index)).WithSuccess("User deletion done");
                 }
 
                 AddErrors(result);

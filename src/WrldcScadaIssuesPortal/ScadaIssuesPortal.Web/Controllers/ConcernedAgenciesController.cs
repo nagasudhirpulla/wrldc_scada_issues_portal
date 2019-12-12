@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ScadaIssuesPortal.Core.Entities;
 using ScadaIssuesPortal.Data;
+using ScadaIssuesPortal.Web.Extensions;
 
 namespace ScadaIssuesPortal.Web.Controllers
 {
@@ -39,7 +40,7 @@ namespace ScadaIssuesPortal.Web.Controllers
             }
             _context.ReportingCaseConcerneds.Remove(concernedAgency);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(ReportingCasesController.Edit), ReportingCasesController.ControllerPath, new { id = caseId });
+            return RedirectToAction(nameof(ReportingCasesController.Edit), ReportingCasesController.ControllerPath, new { id = caseId }).WithSuccess("Concerned Agency Deleted");
         }
 
         //[HttpPost]

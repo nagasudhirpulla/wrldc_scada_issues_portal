@@ -57,6 +57,10 @@ namespace ScadaIssuesPortal.Web
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
 
+            EmailConfiguration emailConfig = new EmailConfiguration();
+            Configuration.Bind("EmailSettings", emailConfig);
+            services.AddSingleton(emailConfig);
+
             services
                 .AddControllersWithViews()
                 .AddRazorRuntimeCompilation();

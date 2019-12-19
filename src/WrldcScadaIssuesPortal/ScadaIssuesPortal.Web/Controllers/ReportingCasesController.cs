@@ -202,6 +202,7 @@ namespace ScadaIssuesPortal.Web.Controllers
                                                     .Select(rcc => rcc.UserId).ToListAsync();
                 if (!concernedUserIds.Any(usr => usr == vm.ConcernedAgencyId))
                 {
+                    // check if we need to add a new concerned agency
                     // _context.ReportingCaseConcerneds.Remove(conc);
                     // await _context.SaveChangesAsync();
                     ReportingCaseConcerned concerned = new ReportingCaseConcerned()

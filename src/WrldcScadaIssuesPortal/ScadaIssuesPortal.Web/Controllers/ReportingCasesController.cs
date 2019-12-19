@@ -15,6 +15,7 @@ using ScadaIssuesPortal.Core.Entities;
 using ScadaIssuesPortal.Data;
 using ScadaIssuesPortal.Web.Models;
 using ScadaIssuesPortal.Web.Extensions;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace ScadaIssuesPortal.Web.Controllers
 {
@@ -25,11 +26,13 @@ namespace ScadaIssuesPortal.Web.Controllers
         private readonly ILogger<ReportingCasesController> _logger;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ApplicationDbContext _context;
-        public ReportingCasesController(ILogger<ReportingCasesController> logger, ApplicationDbContext dbContext, UserManager<IdentityUser> userManager)
+        private readonly IEmailSender _emailSender;
+        public ReportingCasesController(ILogger<ReportingCasesController> logger, ApplicationDbContext dbContext, UserManager<IdentityUser> userManager, IEmailSender emailSender)
         {
             _userManager = userManager;
             _logger = logger;
             _context = dbContext;
+            _emailSender = emailSender;
         }
 
         public async Task<IActionResult> Index()
@@ -113,6 +116,13 @@ namespace ScadaIssuesPortal.Web.Controllers
                     if (numInserted == 1)
                     {
                         _logger.LogInformation("New Case Concerned agency created");
+                        string caseDetail = String.Join("<br>", newCase.CaseItems.Select(ci => $"{ci.Question} - {ci.Response}").ToArray());
+                        await _emailSender.SendEmailAsync(user.Email,
+                            "New WRLDC SCADA Issue alert",
+                            $"Sir/Madam,<br>You are being associated with a new issue with id <b>{newCase.Id}</b> in WRLDC SCADA issues portal." +
+                            "<br><br><b>Issue Details</b>" +
+                            $"<br>{caseDetail}" +
+                            "<br><br>For kind information please<br><br>Regards<br>IT WRLDC");
                         return RedirectToAction(nameof(Index)).WithSuccess("New Issue created");
                     }
                     else
@@ -212,6 +222,14 @@ namespace ScadaIssuesPortal.Web.Controllers
                     };
                     _context.Add(concerned);
                     int numInserted = await _context.SaveChangesAsync();
+                    IdentityUser user = await _context.Users.FindAsync(vm.ConcernedAgencyId);
+                    string caseDetail = String.Join("<br>", repCase.CaseItems.Select(ci => $"{ci.Question} - {ci.Response}").ToArray());
+                    await _emailSender.SendEmailAsync(user.Email,
+                            "WRLDC SCADA Issue alert",
+                            $"Sir/Madam,<br>You are being associated with an issue with id <b>{repCase.Id}</b> in WRLDC SCADA issues portal." +
+                            "<br><b>Issue Details</b>" +
+                            $"<br>{caseDetail}" +
+                            "<br><br>For kind information please<br><br>Regards<br>IT WRLDC");
                 }
 
                 return RedirectToAction(nameof(Index)).WithSuccess("Issue Editing done");

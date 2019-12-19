@@ -45,10 +45,11 @@ namespace ScadaIssuesPortal.Web.Controllers
 
             // show only issues which the logged in user is concerned with
             var vm = await _context.ReportingCases
+                            .Include(rc => rc.CreatedBy)
                             .Include(rc => rc.CaseItems)
                             .Include(rc => rc.ConcernedAgencies)
                             .ThenInclude(ca => ca.User)
-                            .Where(rc => isAdmin || rc.ConcernedAgencies.Any(ca => ca.UserId == userId))
+                            .Where(rc => isAdmin || rc.ConcernedAgencies.Any(ca => ca.UserId == userId) || (rc.CreatedById == userId))
                             .OrderByDescending(rc => rc.CreatedAt).ToListAsync();
             return View(vm);
         }
@@ -79,6 +80,8 @@ namespace ScadaIssuesPortal.Web.Controllers
                     DownTime = vm.DownTime
                 };
 
+                // add issue created by Information
+                newCase.CreatedById = _userManager.GetUserId(User);
                 // add case items from vm
                 List<ReportingCaseItem> caseItems = new List<ReportingCaseItem>();
                 for (int caseTemplIter = 0; caseTemplIter < vm.CaseItems.Count; caseTemplIter++)

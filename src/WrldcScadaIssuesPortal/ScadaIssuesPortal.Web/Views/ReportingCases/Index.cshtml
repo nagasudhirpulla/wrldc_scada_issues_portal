@@ -18,6 +18,9 @@
                 Creation Time
             </th>
             <th>
+                Created By
+            </th>
+            <th>
                 Issue Time
             </th>
             <th>
@@ -50,6 +53,9 @@
                 </td>
                 <td>
                     @item.CreatedAt.ToString("dd MMM yyyy HH:mm")
+                </td>
+                <td>
+                    @item.CreatedBy.UserName
                 </td>
                 <td>
                     @item.DownTime.ToString("dd MMM yyyy HH:mm")

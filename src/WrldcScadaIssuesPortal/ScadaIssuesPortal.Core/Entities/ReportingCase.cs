@@ -1,6 +1,8 @@
-﻿using ScadaIssuesPortal.Core.Interfaces;
+﻿using Microsoft.AspNetCore.Identity;
+using ScadaIssuesPortal.Core.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace ScadaIssuesPortal.Core.Entities
 {
@@ -17,5 +19,9 @@ namespace ScadaIssuesPortal.Core.Entities
 
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+
+        public IdentityUser CreatedBy { get; set; }
+        [Required]
+        public string CreatedById { get; set; }
     }
 }

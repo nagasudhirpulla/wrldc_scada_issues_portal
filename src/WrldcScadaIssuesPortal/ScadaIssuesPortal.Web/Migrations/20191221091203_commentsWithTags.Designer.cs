@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ScadaIssuesPortal.Data;
@@ -9,9 +10,10 @@ using ScadaIssuesPortal.Data;
 namespace ScadaIssuesPortal.Web.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191221091203_commentsWithTags")]
+    partial class commentsWithTags
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -325,13 +327,13 @@ namespace ScadaIssuesPortal.Web.Migrations
                     b.Property<DateTime>("Created")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<string>("CreatedById")
+                    b.Property<string>("CreatedBy")
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<string>("LastModifiedById")
+                    b.Property<string>("LastModifiedBy")
                         .HasColumnType("text");
 
                     b.Property<int>("ReportingCaseId")
@@ -342,10 +344,6 @@ namespace ScadaIssuesPortal.Web.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("LastModifiedById");
 
                     b.HasIndex("ReportingCaseId");
 
@@ -476,14 +474,6 @@ namespace ScadaIssuesPortal.Web.Migrations
 
             modelBuilder.Entity("ScadaIssuesPortal.Core.Entities.ReportingCaseComment", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "LastModifiedBy")
-                        .WithMany()
-                        .HasForeignKey("LastModifiedById");
-
                     b.HasOne("ScadaIssuesPortal.Core.Entities.ReportingCase", "ReportingCase")
                         .WithMany("Comments")
                         .HasForeignKey("ReportingCaseId")

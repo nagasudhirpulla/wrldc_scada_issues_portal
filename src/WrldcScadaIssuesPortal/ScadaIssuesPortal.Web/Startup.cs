@@ -15,6 +15,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using ScadaIssuesPortal.App;
 using ScadaIssuesPortal.App.Security;
+using ScadaIssuesPortal.Web.Services;
+using ScadaIssuesPortal.Core.Interfaces;
 
 namespace ScadaIssuesPortal.Web
 {
@@ -61,6 +63,8 @@ namespace ScadaIssuesPortal.Web
             Configuration.Bind("EmailSettings", emailConfig);
             services.AddSingleton(emailConfig);
 
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
+            
             services
                 .AddControllersWithViews()
                 .AddRazorRuntimeCompilation();

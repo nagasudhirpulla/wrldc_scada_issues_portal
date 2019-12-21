@@ -44,11 +44,12 @@ namespace ScadaIssuesPortal.Web.Controllers
             string userId = _userManager.GetUserId(User);
 
             // show only issues which the logged in user is concerned with
-            var vm = await _context.ReportingCases
+            List<ReportingCase> vm = await _context.ReportingCases
                             .Include(rc => rc.CreatedBy)
+                            .Include(rc => rc.Comments).ThenInclude(co => co.CreatedBy)
+                            .Include(rc => rc.Comments).ThenInclude(co => co.LastModifiedBy)
                             .Include(rc => rc.CaseItems)
-                            .Include(rc => rc.ConcernedAgencies)
-                            .ThenInclude(ca => ca.User)
+                            .Include(rc => rc.ConcernedAgencies).ThenInclude(ca => ca.User)
                             .Where(rc => isAdmin || rc.ConcernedAgencies.Any(ca => ca.UserId == userId) || (rc.CreatedById == userId))
                             .OrderByDescending(rc => rc.CreatedAt).ToListAsync();
             return View(vm);
@@ -159,8 +160,6 @@ namespace ScadaIssuesPortal.Web.Controllers
                 DownTime = repCase.DownTime,
                 CaseItems = repCase.CaseItems,
                 ResolutionTime = repCase.ResolutionTime,
-                ResolutionRemarks = repCase.ResolutionRemarks,
-                AdminRemarks = repCase.AdminRemarks,
                 ConcernedAgencies = repCase.ConcernedAgencies
             };
             if (repCase.ConcernedAgencies.Count > 0)
@@ -186,8 +185,6 @@ namespace ScadaIssuesPortal.Web.Controllers
                     return NotFound();
                 }
                 // update the reporting case
-                repCase.AdminRemarks = vm.AdminRemarks;
-                repCase.ResolutionRemarks = vm.ResolutionRemarks;
                 repCase.ResolutionTime = vm.ResolutionTime;
                 repCase.DownTime = vm.DownTime;
                 repCase.CaseItems = vm.CaseItems;

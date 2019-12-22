@@ -6,6 +6,10 @@
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Content Remove="wwwroot\js\case_manage_ui_app\src\case_edit_ui.ts" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.0.0" />
@@ -33,7 +37,7 @@
 
 
   <ItemGroup>
-    <Folder Include="wwwroot\js\case_manage_ui_app\" />
+    <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\case_edit_ui.ts" />
   </ItemGroup>
 
 </Project>

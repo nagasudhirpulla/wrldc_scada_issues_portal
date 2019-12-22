@@ -49,7 +49,7 @@ namespace ScadaIssuesPortal.Web.Controllers
                 return NotFound();
             }
             // get the reporting case
-            ReportingCase repCase = await _context.ReportingCases.Include(rc => rc.ConcernedAgencies)
+            ReportingCase repCase = await _context.ReportingCases
                                             .Include(rc => rc.CreatedBy)
                                             .Include(rc => rc.Comments).ThenInclude(co => co.CreatedBy)
                                             .Include(rc => rc.Comments).ThenInclude(co => co.LastModifiedBy)

@@ -7,7 +7,78 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="wwwroot\js\case_manage_ui_app\src\case_edit_ui.ts" />
+    <Content Remove="wwwroot\js\case_manage_ui_app\src\case_edit_ui.tsx" />
+    <Content Remove="wwwroot\js\case_manage_ui_app\src\server_mediators\case_data.tsx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\build-info.json" />
+    <Content Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\package.json" />
+    <Content Include="wwwroot\js\case_manage_ui_app\node_modules\react\build-info.json" />
+    <Content Include="wwwroot\js\case_manage_ui_app\node_modules\react\package.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\cjs\react-dom-server.browser.development.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\cjs\react-dom-server.browser.production.min.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\cjs\react-dom-server.node.development.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\cjs\react-dom-server.node.production.min.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\cjs\react-dom-test-utils.development.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\cjs\react-dom-test-utils.production.min.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\cjs\react-dom-unstable-fizz.browser.development.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\cjs\react-dom-unstable-fizz.browser.production.min.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\cjs\react-dom-unstable-fizz.node.development.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\cjs\react-dom-unstable-fizz.node.production.min.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\cjs\react-dom-unstable-flight-client.development.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\cjs\react-dom-unstable-flight-client.production.min.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\cjs\react-dom-unstable-flight-server.browser.development.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\cjs\react-dom-unstable-flight-server.browser.production.min.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\cjs\react-dom-unstable-flight-server.node.development.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\cjs\react-dom-unstable-flight-server.node.production.min.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\cjs\react-dom-unstable-native-dependencies.development.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\cjs\react-dom-unstable-native-dependencies.production.min.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\cjs\react-dom.development.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\cjs\react-dom.production.min.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\cjs\react-dom.profiling.min.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\index.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\LICENSE" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\profiling.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\README.md" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\server.browser.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\server.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\server.node.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\test-utils.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\umd\react-dom-server.browser.development.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\umd\react-dom-server.browser.production.min.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\umd\react-dom-test-utils.development.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\umd\react-dom-test-utils.production.min.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\umd\react-dom-unstable-fizz.browser.development.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\umd\react-dom-unstable-fizz.browser.production.min.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\umd\react-dom-unstable-flight-client.development.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\umd\react-dom-unstable-flight-client.production.min.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\umd\react-dom-unstable-flight-server.browser.development.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\umd\react-dom-unstable-flight-server.browser.production.min.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\umd\react-dom-unstable-native-dependencies.development.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\umd\react-dom-unstable-native-dependencies.production.min.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\umd\react-dom.development.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\umd\react-dom.production.min.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\umd\react-dom.profiling.min.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\unstable-fizz.browser.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\unstable-fizz.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\unstable-fizz.node.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\unstable-flight-client.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\unstable-flight-server.browser.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\unstable-flight-server.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\unstable-flight-server.node.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\unstable-native-dependencies.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react\cjs\react.development.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react\cjs\react.production.min.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react\index.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react\LICENSE" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react\README.md" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react\umd\react.development.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react\umd\react.production.min.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\react\umd\react.profiling.min.js" />
   </ItemGroup>
 
 
@@ -15,6 +86,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.0.0" />
@@ -37,7 +109,8 @@
 
 
   <ItemGroup>
-    <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\case_edit_ui.ts" />
+    <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\case_edit_ui.tsx" />
+    <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\server_mediators\case_data.tsx" />
   </ItemGroup>
 
 </Project>

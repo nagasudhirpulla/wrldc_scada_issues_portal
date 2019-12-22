@@ -3,7 +3,7 @@ const path = require('path');
 module.exports = {
     // multiple entry points - https://github.com/webpack/docs/wiki/multiple-entry-points
     entry: {
-        case_edit_ui: ['babel-polyfill', path.resolve(__dirname, 'src/case_edit_ui.ts')]
+        case_edit_ui: ['babel-polyfill', path.resolve(__dirname, 'src/case_edit_ui.tsx')]
     },
 
     output: {
@@ -23,19 +23,19 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.ts$/,
+                test: /\.(ts|tsx)$/,
                 exclude: /node_modules/,
                 use: ["babel-loader", "ts-loader"]
             },
             {
-                test: /\.js$/,
+                test: /\.(js|jsx)$/,
                 exclude: /node_modules/,
                 use: ["babel-loader"]
             },
             // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
             {
                 enforce: "pre",
-                test: /\.js$/,
+                test: /\.(jsx|tsx)$/,
                 loader: "source-map-loader"
             }
         ]
@@ -44,6 +44,6 @@ module.exports = {
     plugins: [],
 
     resolve: {
-        extensions: ['.js', '.ts'],
+        extensions: ['.js', '.ts', '.jsx', '.tsx'],
     }
 };

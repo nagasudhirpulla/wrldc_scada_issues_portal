@@ -1,93 +1,11 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@using ScadaIssuesPortal.Core
-@using ScadaIssuesPortal.Core.Entities
 @inject SignInManager<IdentityUser> SignInManager
 @inject UserManager<IdentityUser> UserManager
-@model ScadaIssuesPortal.Web.Models.ReportingCaseEditVM
 @{
     ViewData["Title"] = "Edit Issue";
 }
 
-<div class="row justify-content-center align-items-center">
-    <div class="col col-md-8 col-lg-8 col-xl-6">
-        <h2>@ViewData["Title"]</h2>
-        <form method="post">
-            <hr />
-            <div class="form-group">
-                <label asp-for="DownTime" class="question"></label>
-                <input asp-for="DownTime" class="form-control datetimepicker" />
-                <span asp-validation-for="DownTime" class="text-danger"></span>
-            </div>
-            <hr />
-            @if (Model.CaseItems.Count > 0)
-            {
-                @for (int caseIter = 0; caseIter < Model.CaseItems.Count; caseIter++)
-                {
-                    <input asp-for="CaseItems[caseIter].Id" type="hidden" />
-                    <input asp-for="CaseItems[caseIter].Question" type="hidden" />
-                    <input asp-for="CaseItems[caseIter].SerialNum" type="hidden" />
-                    <input asp-for="CaseItems[caseIter].ResponseType" type="hidden" />
-                    ResponseType inpType = Model.CaseItems[caseIter].ResponseType;
-                    <div class="form-group">
-                        <label class="question">@Model.CaseItems[caseIter].Question</label>
-                        @if (inpType == ResponseType.LongText)
-                        {
-                            <textarea asp-for="CaseItems[caseIter].Response" class="form-control"> </textarea>
-                        }
-                        else if (inpType == ResponseType.DateTime)
-                        {
-                            <input asp-for="CaseItems[caseIter].Response" class="form-control datetimepicker" />
-                        }
-                        else
-                        {
-                            <input asp-for="CaseItems[caseIter].Response" class="form-control" />
-                        }
-                    </div>
-                    <hr />
-                }
-                <div class="form-group">
-                    <label class="question">Concerned Agencies</label>
-                    @for (int agIter = 0; agIter < Model.ConcernedAgencies.Count; agIter++)
-                    {
-                        <div>
-                            <span>@Model.ConcernedAgencies[agIter].User.UserName</span> |
-                            <a asp-action="Delete"
-                               asp-controller="ConcernedAgencies"
-                               asp-route-userId="@Model.ConcernedAgencies[agIter].UserId"
-                               asp-route-caseId="@Model.ConcernedAgencies[agIter].ReportingCaseId">Delete</a>
-                        </div>
-                    }
-                </div>
-                <hr />
-                <div class="form-group">
-                    <label asp-for="ConcernedAgencyId" class="control-label question"></label>
-                    <select asp-for="ConcernedAgencyId" class="form-control" asp-items="ViewBag.UserId"></select>
-                    <span asp-validation-for="ConcernedAgencyId" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="ResolutionTime" class="question"></label>
-                    <input asp-for="ResolutionTime" class="form-control datetimepicker" />
-                    <span asp-validation-for="ResolutionTime" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="ResolutionRemarks" class="question"></label>
-                    <input asp-for="ResolutionRemarks" class="form-control" />
-                    <span asp-validation-for="ResolutionRemarks" class="text-danger"></span>
-                </div>
-                @if (User.IsInRole(SecurityConstants.AdminRoleString))
-                {
-                    <div class="form-group">
-                        <label asp-for="AdminRemarks" class="question"></label>
-                        <input asp-for="AdminRemarks" class="form-control" />
-                        <span asp-validation-for="AdminRemarks" class="text-danger"></span>
-                    </div>
-                }
-            }
-            <button type="submit" class="btn btn-success">Save Changes</button>
-        </form>
-        <a asp-action="Index">Back to List</a>
-    </div>
-</div>
+<div id="root"></div>
 
 @section Scripts {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -98,11 +16,13 @@
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    @await Html.PartialAsync("_ValidationScriptsPartial")
     <script>
         $(".datetimepicker").flatpickr({
             enableTime: true,
             dateFormat: "Y-m-d H:i",
         });
     </script>
+    <script src="~/js/case_manage_ui_app/node_modules/react/umd/react.production.min.js"></script>
+    <script src="~/js/case_manage_ui_app/node_modules/react-dom/umd/react-dom.production.min.js"></script>
+    <script src="~/js/case_manage_ui_app/dist/bundle.case_edit_ui.js"></script>
 }

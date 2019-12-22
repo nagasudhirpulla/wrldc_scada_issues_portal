@@ -17,6 +17,8 @@ using ScadaIssuesPortal.App;
 using ScadaIssuesPortal.App.Security;
 using ScadaIssuesPortal.Web.Services;
 using ScadaIssuesPortal.Core.Interfaces;
+using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace ScadaIssuesPortal.Web
 {
@@ -55,7 +57,7 @@ namespace ScadaIssuesPortal.Web
                 options.LoginPath = "/Identity/Account/Login";
                 options.AccessDeniedPath = "/Identity/Account/AccessDenied";
             });
-            
+
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
 
@@ -64,9 +66,14 @@ namespace ScadaIssuesPortal.Web
             services.AddSingleton(emailConfig);
 
             services.AddScoped<ICurrentUserService, CurrentUserService>();
-            
+
             services
                 .AddControllersWithViews()
+                .AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                })
                 .AddRazorRuntimeCompilation();
             services.AddRazorPages();
         }

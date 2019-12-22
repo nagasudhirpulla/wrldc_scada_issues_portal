@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <UserSecretsId>aspnet-ScadaIssuesPortal.Web-D8E7C976-FFBB-4C5C-AB95-6811F6E9FB09</UserSecretsId>
+    <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
   </PropertyGroup>
 
 
@@ -14,6 +15,10 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.0.0" />
+    <PackageReference Include="Microsoft.TypeScript.Compiler" Version="3.1.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.0.0" />
     <PackageReference Include="morelinq" Version="3.3.1" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.0.1" />
@@ -24,6 +29,11 @@
     <ProjectReference Include="..\ScadaIssuesPortal.App\ScadaIssuesPortal.App.csproj" />
     <ProjectReference Include="..\ScadaIssuesPortal.Core\ScadaIssuesPortal.Core.csproj" />
     <ProjectReference Include="..\ScadaIssuesPortal.Data\ScadaIssuesPortal.Data.csproj" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Folder Include="wwwroot\js\case_manage_ui_app\" />
   </ItemGroup>
 
 </Project>

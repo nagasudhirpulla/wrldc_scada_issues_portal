@@ -45,7 +45,7 @@ namespace ScadaIssuesPortal.Web.Controllers
         public async Task<ActionResult<object>> GetUsersInfo()
         {
             var userList = await _context.Users.ToListAsync();
-            var userInfo = userList.Select(async u => new { Username = u.UserName, Roles = await _userManager.GetRolesAsync(u) }).Select(t => t.Result);
+            var userInfo = userList.Select(async u => new { u.Id, u.UserName, Roles = await _userManager.GetRolesAsync(u) }).Select(t => t.Result);
             return Ok(userInfo);
         }
 

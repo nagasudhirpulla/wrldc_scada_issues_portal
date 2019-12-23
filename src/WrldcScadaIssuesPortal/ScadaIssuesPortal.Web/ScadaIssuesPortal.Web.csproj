@@ -8,7 +8,15 @@
 
   <ItemGroup>
     <Content Remove="wwwroot\js\case_manage_ui_app\src\case_edit_ui.tsx" />
+    <Content Remove="wwwroot\js\case_manage_ui_app\src\components\caseEditPage.tsx" />
+    <Content Remove="wwwroot\js\case_manage_ui_app\src\initial_states\caseEditPageInitState.tsx" />
+    <Content Remove="wwwroot\js\case_manage_ui_app\src\reducers\caseEditPageReducer.ts" />
     <Content Remove="wwwroot\js\case_manage_ui_app\src\server_mediators\case_data.tsx" />
+    <Content Remove="wwwroot\js\case_manage_ui_app\src\server_mediators\users.tsx" />
+    <Content Remove="wwwroot\js\case_manage_ui_app\src\type_defs\ICaseEditPageState.ts" />
+    <Content Remove="wwwroot\js\case_manage_ui_app\src\type_defs\ICaseItem.ts" />
+    <Content Remove="wwwroot\js\case_manage_ui_app\src\type_defs\IComment.ts" />
+    <Content Remove="wwwroot\js\case_manage_ui_app\src\type_defs\IConcernedAgency.ts" />
   </ItemGroup>
 
   <ItemGroup>
@@ -110,7 +118,21 @@
 
   <ItemGroup>
     <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\case_edit_ui.tsx" />
+    <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\components\caseEditPage.tsx" />
+    <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\initial_states\caseEditPageInitState.tsx" />
+    <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\reducers\caseEditPageReducer.ts" />
+    <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\server_mediators\users.tsx" />
     <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\server_mediators\case_data.tsx" />
+    <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\type_defs\IComment.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\type_defs\IConcernedAgency.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\type_defs\ICaseItem.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\type_defs\ICaseEditPageState.ts" />
   </ItemGroup>
 
 </Project>

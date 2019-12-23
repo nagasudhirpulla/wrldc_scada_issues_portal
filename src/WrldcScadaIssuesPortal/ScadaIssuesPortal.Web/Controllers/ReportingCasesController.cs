@@ -168,6 +168,7 @@ namespace ScadaIssuesPortal.Web.Controllers
             }
             var userList = await _context.Users.ToListAsync();
             ViewData["userId"] = new SelectList(userList, nameof(IdentityUser.Id), nameof(IdentityUser.UserName));
+            ViewBag.caseId = id;
             return View(vm);
         }
 

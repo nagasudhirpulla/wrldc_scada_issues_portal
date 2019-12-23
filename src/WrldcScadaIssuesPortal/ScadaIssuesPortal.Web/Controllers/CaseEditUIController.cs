@@ -33,12 +33,20 @@ namespace ScadaIssuesPortal.Web.Controllers
             _context = dbContext;
         }
 
-        [HttpGet("userInfo")]
-        public async Task<ActionResult<object>> GetUserInfo(int? id)
+        [HttpGet("currentUser")]
+        public async Task<ActionResult<object>> GetUserInfo()
         {
             IdentityUser currUser = await _userManager.GetUserAsync(User);
             IList<string> roles = await _userManager.GetRolesAsync(currUser);
-            return Ok(new { username = currUser.UserName, Roles = roles });
+            return Ok(new { Username = currUser.UserName, Roles = roles });
+        }
+
+        [HttpGet("users")]
+        public async Task<ActionResult<object>> GetUsersInfo()
+        {
+            var userList = await _context.Users.ToListAsync();
+            var userInfo = userList.Select(async u => new { Username = u.UserName, Roles = await _userManager.GetRolesAsync(u) }).Select(t => t.Result);
+            return Ok(userInfo);
         }
 
         [HttpGet("{id}")]
@@ -50,11 +58,9 @@ namespace ScadaIssuesPortal.Web.Controllers
             }
             // get the reporting case
             ReportingCase repCase = await _context.ReportingCases
-                                            .Include(rc => rc.CreatedBy)
-                                            .Include(rc => rc.Comments).ThenInclude(co => co.CreatedBy)
-                                            .Include(rc => rc.Comments).ThenInclude(co => co.LastModifiedBy)
+                                            .Include(rc => rc.Comments)
                                             .Include(rc => rc.CaseItems)
-                                            .Include(rc => rc.ConcernedAgencies).ThenInclude(ca => ca.User)
+                                            .Include(rc => rc.ConcernedAgencies)
                                             .SingleOrDefaultAsync(rc => rc.Id == id);
             if (repCase == default)
             {

@@ -53,6 +53,13 @@ export const useCaseEditPageReducer = (initState: ICaseEditPageState): [ICaseEdi
 
     useEffect(() => {
         document.title = `Id is ${pageState.info.id}`;
+        (async function () {
+            const caseInfo = await getCaseInfo(pageState.baseAddr, pageState.info.id);
+            pageStateDispatch({
+                type: actionTypes.setCaseInfoAction,
+                payload: caseInfo
+            });
+        })();
         // asyncDispatch({ type: actionTypes.setCaseInfoAction });
     }, [pageState.info.id]);
 

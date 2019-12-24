@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\js\case_manage_ui_app\src\actions\actionTypes.ts" />
     <Content Remove="wwwroot\js\case_manage_ui_app\src\case_edit_ui.tsx" />
     <Content Remove="wwwroot\js\case_manage_ui_app\src\components\caseEditPage.tsx" />
     <Content Remove="wwwroot\js\case_manage_ui_app\src\initial_states\caseEditPageInitState.tsx" />
@@ -117,6 +118,7 @@
 
 
   <ItemGroup>
+    <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\actions\actionTypes.ts" />
     <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\case_edit_ui.tsx" />
     <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\components\caseEditPage.tsx" />
     <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\initial_states\caseEditPageInitState.tsx" />

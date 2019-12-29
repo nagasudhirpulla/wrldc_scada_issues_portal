@@ -6,9 +6,9 @@ export interface ICaseInfo {
     caseItems: ICaseItem[];
     concernedAgencies: IConcernedAgency[];
     comments: IComment[];
-    downTime: Date;
-    resolutionTime: Date;
-    createdAt: Date;
-    updatedAt: Date;
+    downTime: string;
+    resolutionTime: string;
+    createdAt: string;
+    updatedAt: string;
     createdById: string;
 }

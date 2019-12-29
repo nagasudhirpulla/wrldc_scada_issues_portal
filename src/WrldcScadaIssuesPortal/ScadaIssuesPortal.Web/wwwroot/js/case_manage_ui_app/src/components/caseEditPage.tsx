@@ -48,14 +48,14 @@ function CaseEditPage() {
                     );
                 })}
                 <label className="question">Issue Time</label>
-                <input className="form-control datetimepicker" /*defaultValue={pageState.info.downTime.toUTCString()}*/ name="issue_time" ref={register({ required: true })} />
+                <input className="form-control datetimepicker" defaultValue={pageState.info.downTime} name="issue_time" ref={register({ required: true })} />
 
                 <label className="question">Concerned Agencies</label>
                 <Select
                     getOptionLabel={option => `${option.userName}`}
                     defaultValue={pageState.info.concernedAgencies.map((ca) => pageState.users.find((us) => us.id == ca.userId))}
                     isMulti
-                    name="colors"
+                    name="concernedAgencies"
                     options={pageState.users}
                     className="basic-multi-select"
                     classNamePrefix="select"

@@ -2,7 +2,7 @@
 
 export const getUsers = async (baseAddr): Promise<IUserInfo[]> => {
     try {
-        const resp = await fetch(`${baseAddr}/api/users`, {
+        const resp = await fetch(`${baseAddr}/api/CaseEditUI/users`, {
             method: 'get'
         });
         const respJSON = await resp.json() as {};
@@ -16,7 +16,7 @@ export const getUsers = async (baseAddr): Promise<IUserInfo[]> => {
 
 export const getCurrentUser = async (baseAddr): Promise<IUserInfo> => {
     try {
-        const resp = await fetch(`${baseAddr}/api/currentUser`, {
+        const resp = await fetch(`${baseAddr}/api/CaseEditUI/currentUser`, {
             method: 'get'
         });
         const respJSON = await resp.json() as {};

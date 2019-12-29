@@ -5,6 +5,7 @@ import React from 'react';
 import { useForm } from "react-hook-form";
 import { ICaseEditPageState } from '../type_defs/ICaseEditPageState';
 import Select from 'react-select';
+import { IUserInfo } from '../type_defs/IUserInfo';
 
 // getting it from variable initialized from view bag
 declare var _caseId: number;
@@ -51,12 +52,24 @@ function CaseEditPage() {
                 <input className="form-control datetimepicker" defaultValue={pageState.info.downTime} name="issue_time" ref={register({ required: true })} />
 
                 <label className="question">Concerned Agencies</label>
+                {/*https://medium.com/@lahiru0561/react-select-with-custom-label-and-custom-search-122bfe06b6d7*/}
+
                 <Select
-                    getOptionLabel={option => `${option.userName}`}
-                    defaultValue={pageState.info.concernedAgencies.map((ca) => pageState.users.find((us) => us.id == ca.userId))}
+                    /*getOptionLabel={option => `${option.userName}`}
+                    filterOption={(option, searchText) => {
+                        if (searchText) { return option.data.userName.toLowerCase().includes(searchText.toLowerCase()) }
+                        return true
+                    }}*/
+                    defaultValue={
+                        pageState.users.filter(
+                            us => { return pageState.info.concernedAgencies.some(ca => ca.userId == us.id) }
+                        ).map(
+                            usr => { return { label: usr.userName, value: usr.id } }
+                        )
+                    }
                     isMulti
                     name="concernedAgencies"
-                    options={pageState.users}
+                    options={pageState.users.map(us => { return { label: us.userName, value: us.id } })}
                     className="basic-multi-select"
                     classNamePrefix="select"
                 />

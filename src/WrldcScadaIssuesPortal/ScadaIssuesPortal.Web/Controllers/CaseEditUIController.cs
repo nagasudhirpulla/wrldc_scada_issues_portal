@@ -33,6 +33,13 @@ namespace ScadaIssuesPortal.Web.Controllers
             _context = dbContext;
         }
 
+        [HttpGet("commentTags")]
+        public ActionResult<List<string>> GetCommentTags()
+        {
+            List<string> commentTagTypes = Enum.GetNames(typeof(CommentTag)).ToList();
+            return Ok(commentTagTypes);
+        }
+
         [HttpGet("currentUser")]
         public async Task<ActionResult<object>> GetUserInfo()
         {

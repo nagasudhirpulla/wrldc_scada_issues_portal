@@ -5,6 +5,8 @@ import React from 'react';
 import { useForm } from "react-hook-form";
 import { ICaseEditPageState } from '../type_defs/ICaseEditPageState';
 import Select from 'react-select';
+import { IComment } from '../type_defs/IComment';
+import { addComment } from '../server_mediators/comments';
 
 // getting it from variable initialized from view bag
 declare var _caseId: number;
@@ -14,6 +16,11 @@ function CaseEditPage() {
     let [pageState, pageStateDispatch] = useCaseEditPageReducer(pageInitState);
     const { register, handleSubmit, errors } = useForm<ICaseEditPageState>();
     const onSubmit = data => console.log(data);
+    const onCommentSubmit = async data => {
+        console.log("New Comment inp data");
+        console.log(data);
+        pageStateDispatch({ type: actionTypes.addCommentAction, payload: data })
+    };
     console.log(errors);
     return (
         <>
@@ -71,15 +78,24 @@ function CaseEditPage() {
                     classNamePrefix="select"
                 />}
 
-                <label className="question">Comments</label>
+                <label className="question">Comments</label><br />
                 {pageState.info.comments.length == 0 && <span>No comments recieved yet...</span>}
                 {
                     pageState.info.comments.map((comm, commInd) => {
-                    return (<p>{`${comm.created} ${pageState.users.find(usr => usr.id == comm.createdById).userName} ${comm.tag.toString()} ${comm.comment}`}</p>)
+                        return (<p>{`${comm.created} ${pageState.users.find(usr => usr.id == comm.createdById).userName} ${comm.tag.toString()} ${comm.comment}`}</p>)
+                    }
+                    )
                 }
-                )}
-
-                <input type="submit" />
+                <br />
+                <button type="submit">Submit</button>
+            </form>
+            <form onSubmit={handleSubmit(onCommentSubmit)}>
+                <span>Tag</span>
+                <Select name="commTag" ref={register} options={pageState.commentTagTypes.map(tt => { return { label: tt, value: tt } })} />
+                <br />
+                <span>Comment</span>
+                <textarea name="comm" ref={register}></textarea>
+                <button type="submit">Add Comment</button>
             </form>
         </>
     );

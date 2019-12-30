@@ -13,7 +13,8 @@ const initState: ICaseEditPageState = {
         id: 25
     },
     baseAddr: "",
-    users: []
+    users: [],
+    commentTagTypes: []
 };
 
 export default initState;

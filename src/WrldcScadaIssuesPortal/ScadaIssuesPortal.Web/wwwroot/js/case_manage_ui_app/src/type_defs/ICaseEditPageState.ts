@@ -4,5 +4,6 @@ import { IUserInfo } from "./IUserInfo";
 export interface ICaseEditPageState {
     info: ICaseInfo,
     baseAddr: string,
-    users: IUserInfo[]
+    users: IUserInfo[],
+    commentTagTypes: string[]
 }

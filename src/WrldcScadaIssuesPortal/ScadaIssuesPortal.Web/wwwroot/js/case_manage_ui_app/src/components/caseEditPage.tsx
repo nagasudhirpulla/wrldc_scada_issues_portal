@@ -5,7 +5,6 @@ import React from 'react';
 import { useForm } from "react-hook-form";
 import { ICaseEditPageState } from '../type_defs/ICaseEditPageState';
 import Select from 'react-select';
-import { IUserInfo } from '../type_defs/IUserInfo';
 
 // getting it from variable initialized from view bag
 declare var _caseId: number;
@@ -30,16 +29,19 @@ function CaseEditPage() {
             */}
             <form onSubmit={handleSubmit(onSubmit)}>
                 {pageState.info.caseItems.map((caseItem, caseItemInd) => {
-                    const labelComp = <label className="question">{caseItem.question}</label>;
+                    const labelComp = (<>
+                        <label key={`caseQues_${caseItemInd}`} className="question">{caseItem.question}</label>
+                        <input ref={register} defaultValue={caseItem.id} name={`caseItemId[${caseItemInd}]`} key={`caseId_${caseItemInd}`} style={{ display: "none" }}></input>
+                    </>);
                     let inpComp = <></>;
-                    const formItemName = `caseItem_${caseItem.id.toString()}`;
+                    const formItemName = `caseItemResp[${caseItemInd}]`;
                     const defValue = caseItem.response;
                     if ([0, 3, 4].includes(caseItem.responseType)) { // ShortText, Choices, ChoicesWithText
-                        inpComp = <input key={`caseItem_${caseItemInd}`} defaultValue={defValue} className="form-control" type="text" name={formItemName} ref={register({ maxLength: 250 })} />
+                        inpComp = <input key={`caseResp_${caseItemInd}`} defaultValue={defValue} className="form-control" type="text" name={formItemName} ref={register({ maxLength: 250 })} />
                     } else if (caseItem.responseType == 1) { // LongText
-                        inpComp = <textarea key={`caseItem_${caseItemInd}`} defaultValue={defValue} className="form-control" name={formItemName} ref={register({ maxLength: 700 })} />
+                        inpComp = <textarea key={`caseResp_${caseItemInd}`} defaultValue={defValue} className="form-control" name={formItemName} ref={register({ maxLength: 700 })} />
                     } else if (caseItem.responseType == 2) { // DateTime
-                        inpComp = <input key={`caseItem_${caseItemInd}`} defaultValue={defValue} className="form-control datetimepicker" name={formItemName} ref={register({ required: true })} />
+                        inpComp = <input key={`caseResp_${caseItemInd}`} defaultValue={defValue} className="form-control datetimepicker" name={formItemName} ref={register({ required: true })} />
                     }
                     return (
                         <>
@@ -54,12 +56,7 @@ function CaseEditPage() {
                 <label className="question">Concerned Agencies</label>
                 {/*https://medium.com/@lahiru0561/react-select-with-custom-label-and-custom-search-122bfe06b6d7*/}
 
-                <Select
-                    /*getOptionLabel={option => `${option.userName}`}
-                    filterOption={(option, searchText) => {
-                        if (searchText) { return option.data.userName.toLowerCase().includes(searchText.toLowerCase()) }
-                        return true
-                    }}*/
+                {pageState.users.length > 0 && <Select
                     defaultValue={
                         pageState.users.filter(
                             us => { return pageState.info.concernedAgencies.some(ca => ca.userId == us.id) }
@@ -72,7 +69,16 @@ function CaseEditPage() {
                     options={pageState.users.map(us => { return { label: us.userName, value: us.id } })}
                     className="basic-multi-select"
                     classNamePrefix="select"
-                />
+                />}
+
+                <label className="question">Comments</label>
+                {pageState.info.comments.length == 0 && <span>No comments recieved yet...</span>}
+                {
+                    pageState.info.comments.map((comm, commInd) => {
+                    return (<p>{`${comm.created} ${pageState.users.find(usr => usr.id == comm.createdById).userName} ${comm.tag.toString()} ${comm.comment}`}</p>)
+                }
+                )}
+
                 <input type="submit" />
             </form>
         </>

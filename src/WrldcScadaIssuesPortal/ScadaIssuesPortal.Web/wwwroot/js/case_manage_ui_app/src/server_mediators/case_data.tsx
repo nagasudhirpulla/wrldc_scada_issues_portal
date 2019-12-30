@@ -6,7 +6,7 @@ export const getCaseInfo = async (baseAddr: string, caseId: number): Promise<ICa
             method: 'get'
         });
         const respJSON = await resp.json() as {};
-        console.log(respJSON);
+        // console.log(respJSON);
         return respJSON as ICaseInfo;
     } catch (e) {
         console.log(e);

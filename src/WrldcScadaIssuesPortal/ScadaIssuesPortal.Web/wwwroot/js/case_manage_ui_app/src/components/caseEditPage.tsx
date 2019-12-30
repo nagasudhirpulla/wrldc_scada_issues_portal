@@ -1,8 +1,8 @@
 ﻿import pageInitState from '../initial_states/caseEditPageInitState';
 import { useCaseEditPageReducer } from '../reducers/caseEditPageReducer';
 import * as actionTypes from '../actions/actionTypes';
-import React from 'react';
-import { useForm } from "react-hook-form";
+import React, { useEffect } from 'react';
+import { useForm, Controller } from "react-hook-form";
 import { ICaseEditPageState } from '../type_defs/ICaseEditPageState';
 import Select from 'react-select';
 import { IComment } from '../type_defs/IComment';
@@ -12,16 +12,27 @@ import { addComment } from '../server_mediators/comments';
 declare var _caseId: number;
 
 function CaseEditPage() {
-    pageInitState.info.id = _caseId;
-    let [pageState, pageStateDispatch] = useCaseEditPageReducer(pageInitState);
-    const { register, handleSubmit, errors } = useForm<ICaseEditPageState>();
+    const { register, handleSubmit, errors, setValue, reset, watch } = useForm();
     const onSubmit = data => console.log(data);
     const onCommentSubmit = async data => {
         console.log("New Comment inp data");
         console.log(data);
         pageStateDispatch({ type: actionTypes.addCommentAction, payload: data })
     };
+    const handleAgenciesChange = val => setValue("concernedAgencies", val);
+    const handleTagChange = val => setValue("commTag", val);
+
     console.log(errors);
+    const agencySelectValue = watch("concernedAgencies");
+    const tagSelectValue = watch("commTag");
+    useEffect(() => {
+        register({ name: "concernedAgencies" });
+        register({ name: "commTag" });
+    }, [register]);
+
+    pageInitState.info.id = _caseId;
+    let [pageState, pageStateDispatch] = useCaseEditPageReducer(pageInitState);
+
     return (
         <>
             {/*
@@ -63,26 +74,27 @@ function CaseEditPage() {
                 <label className="question">Concerned Agencies</label>
                 {/*https://medium.com/@lahiru0561/react-select-with-custom-label-and-custom-search-122bfe06b6d7*/}
 
-                {pageState.users.length > 0 && <Select
-                    defaultValue={
-                        pageState.users.filter(
-                            us => { return pageState.info.concernedAgencies.some(ca => ca.userId == us.id) }
-                        ).map(
-                            usr => { return { label: usr.userName, value: usr.id } }
-                        )
-                    }
-                    isMulti
-                    name="concernedAgencies"
-                    options={pageState.users.map(us => { return { label: us.userName, value: us.id } })}
-                    className="basic-multi-select"
-                    classNamePrefix="select"
-                />}
+                {pageState.users.length > 0 &&
+                    <Select value={agencySelectValue} onChange={handleAgenciesChange}
+                        defaultValue={
+                            pageState.users.filter(
+                                us => { return pageState.info.concernedAgencies.some(ca => ca.userId == us.id) }
+                            ).map(
+                                usr => { return { label: usr.userName, value: usr.id } }
+                            )
+                        }
+                        isMulti
+                        options={pageState.users.map(us => { return { label: us.userName, value: us.id } })}
+                        className="basic-multi-select"
+                        classNamePrefix="select"
+                        name="concernedAgencies"
+                    />}
 
                 <label className="question">Comments</label><br />
                 {pageState.info.comments.length == 0 && <span>No comments recieved yet...</span>}
-                {
+                {pageState.users.length > 0 &&
                     pageState.info.comments.map((comm, commInd) => {
-                        return (<p>{`${comm.created} ${pageState.users.find(usr => usr.id == comm.createdById).userName} ${comm.tag.toString()} ${comm.comment}`}</p>)
+                        return (<p>{`${comm.created} ${pageState.users.find(usr => (usr.id == comm.createdById)).userName} ${comm.tag.toString()} ${comm.comment}`}</p>)
                     }
                     )
                 }
@@ -91,7 +103,14 @@ function CaseEditPage() {
             </form>
             <form onSubmit={handleSubmit(onCommentSubmit)}>
                 <span>Tag</span>
-                <Select name="commTag" ref={register} options={pageState.commentTagTypes.map(tt => { return { label: tt, value: tt } })} />
+                {pageState.commentTagTypes.length > 0 &&
+                    <Select value={tagSelectValue} onChange={handleTagChange}
+                        className="basic-multi-select"
+                        classNamePrefix="select"
+                        options={pageState.commentTagTypes.map(tt => { return { label: tt, value: tt } })}
+                        name="commTag"
+                    />}
+
                 <br />
                 <span>Comment</span>
                 <textarea name="comm" ref={register}></textarea>

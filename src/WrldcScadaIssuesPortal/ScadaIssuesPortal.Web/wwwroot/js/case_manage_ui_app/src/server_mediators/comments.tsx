@@ -19,6 +19,9 @@ export const addComment = async (baseAddr: string, comment: IComment): Promise<b
     try {
         const resp = await fetch(`${baseAddr}/api/caseEditUI/${comment.reportingCaseId}/addComment`, {
             method: 'post',
+            headers: {
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify(comment)
         });
         const respJSON = await resp.json() as {};

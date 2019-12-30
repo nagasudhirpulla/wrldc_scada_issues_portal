@@ -152,8 +152,7 @@ namespace ScadaIssuesPortal.Web.Controllers
             }
 
             // add new comment
-            repCase.Comments.Add(new ReportingCaseComment() { Comment = vm.Comment, Tag = vm.Tag });
-            _context.ReportingCaseComments.Add(new ReportingCaseComment { Comment = vm.Comment, Tag = vm.Tag, ReportingCaseId = repCase.Id });
+            _context.ReportingCaseComments.Add(new ReportingCaseComment { Comment = vm.Comment, Tag = (CommentTag)Enum.Parse(typeof(CommentTag), vm.Tag), ReportingCaseId = repCase.Id });
             await _context.SaveChangesAsync();
             return Ok();
         }

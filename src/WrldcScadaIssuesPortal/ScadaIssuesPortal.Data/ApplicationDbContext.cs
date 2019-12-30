@@ -8,6 +8,10 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using ScadaIssuesPortal.Core.Interfaces;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace ScadaIssuesPortal.Data
 {
@@ -35,16 +39,19 @@ namespace ScadaIssuesPortal.Data
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {
+            // https://stackoverflow.com/questions/56799520/aspnetcore-2-1-identitydbcontext-how-to-get-current-username
+            var httpContextAccessor = this.GetService<IHttpContextAccessor>();
+            var userId = httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
             foreach (var entry in ChangeTracker.Entries<AuditableEntity>())
             {
                 switch (entry.State)
                 {
                     case EntityState.Added:
-                        entry.Entity.CreatedById = _currentUserService.UserId;
+                        entry.Entity.CreatedById = userId;
                         entry.Entity.Created = DateTime.Now;
                         break;
                     case EntityState.Modified:
-                        entry.Entity.LastModifiedById = _currentUserService.UserId;
+                        entry.Entity.LastModifiedById = userId;
                         entry.Entity.LastModified = DateTime.Now;
                         break;
                 }

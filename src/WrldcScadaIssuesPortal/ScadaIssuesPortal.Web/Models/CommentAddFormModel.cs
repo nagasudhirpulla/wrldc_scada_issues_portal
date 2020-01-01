@@ -8,6 +8,6 @@ namespace ScadaIssuesPortal.Web.Models
         [Required]
         public string Comment { get; set; }
         [Required]
-        public string Tag { get; set; }
+        public CommentTag Tag { get; set; }
     }
 }

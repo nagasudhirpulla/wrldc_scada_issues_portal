@@ -19,6 +19,7 @@
     <Content Remove="wwwroot\js\case_manage_ui_app\src\type_defs\ICaseItem.ts" />
     <Content Remove="wwwroot\js\case_manage_ui_app\src\type_defs\IComment.ts" />
     <Content Remove="wwwroot\js\case_manage_ui_app\src\type_defs\IConcernedAgency.ts" />
+    <Content Remove="wwwroot\js\case_manage_ui_app\src\uitls\dateUtils.tsx" />
   </ItemGroup>
 
   <ItemGroup>
@@ -137,6 +138,7 @@
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\type_defs\ICaseEditPageState.ts" />
+    <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\uitls\dateUtils.tsx" />
   </ItemGroup>
 
 </Project>

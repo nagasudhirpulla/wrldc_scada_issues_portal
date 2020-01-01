@@ -16,15 +16,11 @@
             font-size: large;
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
         // initializing the caseId variable
         const _caseId = @ViewBag.caseId;
-        $(".datetimepicker").flatpickr({
-            enableTime: true,
-            dateFormat: "Y-m-d H:i",
-        });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="~/js/case_manage_ui_app/node_modules/react/umd/react.production.min.js"></script>
     <script src="~/js/case_manage_ui_app/node_modules/react-dom/umd/react-dom.production.min.js"></script>
     <script src="~/js/case_manage_ui_app/dist/bundle.case_edit_ui.js"></script>

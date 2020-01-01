@@ -16,6 +16,8 @@ using ScadaIssuesPortal.Data;
 using ScadaIssuesPortal.Web.Models;
 using ScadaIssuesPortal.Web.Extensions;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.Extensions.Configuration;
+using ScadaIssuesPortal.App;
 
 namespace ScadaIssuesPortal.Web.Controllers
 {
@@ -109,32 +111,39 @@ namespace ScadaIssuesPortal.Web.Controllers
                 if (numInserted >= 1)
                 {
                     _logger.LogInformation("New Case created");
-                    IdentityUser user = await _context.Users.FindAsync(vm.ConcernedAgencyId);
-                    ReportingCaseConcerned concerned = new ReportingCaseConcerned()
+                    // insert each concerned agency
+                    if (!string.IsNullOrWhiteSpace(vm.ConcernedAgencyId))
                     {
-                        ReportingCaseId = newCase.Id,
-                        UserId = user.Id
-                    };
-                    _context.Add(concerned);
-                    numInserted = await _context.SaveChangesAsync();
-                    if (numInserted == 1)
-                    {
-                        _logger.LogInformation("New Case Concerned agency created");
                         string caseDetail = String.Join("<br>", newCase.CaseItems.Select(ci => $"{ci.Question} - {ci.Response}").ToArray());
-                        await _emailSender.SendEmailAsync(user.Email,
-                            "New WRLDC SCADA Issue alert",
-                            $"Sir/Madam,<br>You are being associated with a new issue with id <b>{newCase.Id}</b> in WRLDC SCADA issues portal." +
-                            "<br><br><b>Issue Details</b>" +
-                            $"<br>{caseDetail}" +
-                            "<br><br>For kind information please<br><br>Regards<br>IT WRLDC");
+                        foreach (string concAgId in vm.ConcernedAgencyId.Split(","))
+                        {
+                            IdentityUser user = await _context.Users.FindAsync(concAgId);
+                            ReportingCaseConcerned concerned = new ReportingCaseConcerned()
+                            {
+                                ReportingCaseId = newCase.Id,
+                                UserId = user.Id
+                            };
+                            _context.Add(concerned);
+                            numInserted = await _context.SaveChangesAsync();
+                            if (numInserted == 1)
+                            {
+                                _logger.LogInformation("New Case Concerned agency created");
+                                await _emailSender.SendEmailAsync($"{user.Email}",
+                                    "New WRLDC SCADA Issue alert",
+                                    $"Sir/Madam,<br>You are being associated with a new issue with id <b>{newCase.Id}</b> in WRLDC SCADA issues portal." +
+                                    "<br><br><b>Issue Details</b>" +
+                                    $"<br>{caseDetail}" +
+                                    "<br><br>For kind information please<br><br>Regards<br>IT WRLDC");
+                            }
+                            else
+                            {
+                                string msg = $"New Case Concerned agency not created as db returned num insertions as {numInserted}";
+                                _logger.LogInformation(msg);
+                                //todo create custom exception
+                                throw new Exception(msg);
+                            }
+                        }
                         return RedirectToAction(nameof(Index)).WithSuccess("New Issue created");
-                    }
-                    else
-                    {
-                        string msg = $"New Case Concerned agency not created as db returned num insertions as {numInserted}";
-                        _logger.LogInformation(msg);
-                        //todo create custom exception
-                        throw new Exception(msg);
                     }
                 }
                 else
@@ -178,6 +187,7 @@ namespace ScadaIssuesPortal.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                IdentityUser adminUser = await _userManager.FindByNameAsync("admin");
                 // get the reporting case
                 ReportingCase repCase = await _context.ReportingCases.Include(rc => rc.ConcernedAgencies)
                                                 .SingleOrDefaultAsync(rc => rc.Id == id);
@@ -225,7 +235,7 @@ namespace ScadaIssuesPortal.Web.Controllers
                     int numInserted = await _context.SaveChangesAsync();
                     IdentityUser user = await _context.Users.FindAsync(vm.ConcernedAgencyId);
                     string caseDetail = String.Join("<br>", repCase.CaseItems.Select(ci => $"{ci.Question} - {ci.Response}").ToArray());
-                    await _emailSender.SendEmailAsync(user.Email,
+                    await _emailSender.SendEmailAsync($"{user.Email};{adminUser.Email}",
                             "WRLDC SCADA Issue alert",
                             $"Sir/Madam,<br>You are being associated with an issue with id <b>{repCase.Id}</b> in WRLDC SCADA issues portal." +
                             "<br><b>Issue Details</b>" +

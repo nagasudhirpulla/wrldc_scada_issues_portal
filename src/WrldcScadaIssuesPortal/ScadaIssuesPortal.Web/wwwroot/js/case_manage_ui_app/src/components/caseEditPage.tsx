@@ -3,48 +3,102 @@ import { useCaseEditPageReducer } from '../reducers/caseEditPageReducer';
 import * as actionTypes from '../actions/actionTypes';
 import React, { useEffect } from 'react';
 import { useForm, Controller } from "react-hook-form";
-import { ICaseEditPageState } from '../type_defs/ICaseEditPageState';
 import Select from 'react-select';
 import { IComment } from '../type_defs/IComment';
-import { addComment } from '../server_mediators/comments';
+import * as dateFormat from 'dateformat';
 
 // getting it from variable initialized from view bag
 declare var _caseId: number;
+declare var $: any;
 
 function CaseEditPage() {
-    const { register, handleSubmit, errors, setValue, reset, watch } = useForm();
-    const onSubmit = data => console.log(data);
-    const onCommentSubmit = async data => {
-        console.log("New Comment inp data");
-        console.log(data);
-        pageStateDispatch({ type: actionTypes.addCommentAction, payload: data })
-    };
-    const handleAgenciesChange = val => setValue("concernedAgencies", val);
-    const handleTagChange = val => setValue("commTag", val);
-
-    console.log(errors);
-    const agencySelectValue = watch("concernedAgencies");
-    const tagSelectValue = watch("commTag");
-    useEffect(() => {
-        register({ name: "concernedAgencies" });
-        register({ name: "commTag" });
-    }, [register]);
-
+    // setup reducer
     pageInitState.info.id = _caseId;
     let [pageState, pageStateDispatch] = useCaseEditPageReducer(pageInitState);
 
+    //setup form
+    const { register, handleSubmit, errors, setValue, reset, watch } = useForm();
+
+    // setup concerned agencies multi select widget
+    const handleAgenciesChange = val => setValue("concernedAgencies", val);
+    const agencySelectValue = watch("concernedAgencies");
+
+    useEffect(() => {
+        register({ name: "concernedAgencies" });
+    }, [register]);
+
+    useEffect(() => {
+        if (pageState.info.downTime) {
+            $(".datetimepicker").flatpickr({
+                enableTime: true,
+                altInput: true,
+                altFormat: "d-M-Y H:i",
+            });
+        }
+    }, [pageState.info.downTime]);
+
+    useEffect(() => {
+        let defAgenciesOpts = pageState.users.filter(
+            us => { return pageState.info.concernedAgencies.some(ca => ca.userId == us.id) }
+        ).map(
+            usr => { return { label: usr.userName, value: usr.id } }
+        );
+        console.log("defAgenciesOpts")
+        console.log(defAgenciesOpts)
+        handleAgenciesChange(defAgenciesOpts)
+    }, [pageState.info.concernedAgencies, pageState.users]);
+
+    // log errors
+    console.log(errors);
+
+    // on Issue edit form submit
+    const onSubmit = data => {
+        console.log(data)
+        let caseObj = pageState.info;
+        for (var caseItemIter = 0; caseItemIter < caseObj.caseItems.length; caseItemIter++) {
+            // edit case item responses
+            caseObj.caseItems[caseItemIter].response = data.caseItemResp[caseItemIter];
+        }
+        caseObj.downTime = data.issue_time;
+        caseObj.concernedAgencies = data.concernedAgencies.map(ca => {
+            return {
+                reportingCaseId: pageState.info.id,
+                userId: ca.value,
+                id: -1
+            }
+        });
+        console.log("caseObj=");
+        console.log(caseObj);
+        pageStateDispatch({ type: actionTypes.setCaseInfoAction, payload: caseObj })
+    };
+
+    // on New Comment Delete submit
+    const onCommDel = (commId: number) => {
+        return (() => {
+            console.log(`deleleting comment id ${commId}`);
+            pageStateDispatch({ type: actionTypes.delCommentAction, payload: commId })
+        });
+    };
+
+    // on New Comment form submit
+    const onCommentSubmit = async data => {
+        console.log("New Comment inp data");
+        console.log(data);
+        const newCommObj: IComment = {
+            reportingCaseId: pageState.info.id,
+            comment: data.comm,
+            tag: pageState.commentTagTypes.findIndex(ct => ct == data.commTag),
+            created: "",
+            createdById: "",
+            id: -1
+        }
+        pageStateDispatch({ type: actionTypes.addCommentAction, payload: newCommObj })
+        setValue("comm", "");
+    };
+
     return (
         <>
-            {/*
-            <div>
-                <p>Id is {pageState.info.id}</p>
-                <button onClick={() => pageStateDispatch({ type: actionTypes.incrementAction })}>+1</button>
-                <button onClick={() => pageStateDispatch({ type: actionTypes.decrementAction })}>-1</button>
-            </div>
-            <div>
-                <pre>{JSON.stringify(pageState, null, 4)}</pre>
-            </div>
-            */}
+            {/*<div><pre>{JSON.stringify(pageState, null, 4)}</pre></div>*/}
             <form onSubmit={handleSubmit(onSubmit)}>
                 {pageState.info.caseItems.map((caseItem, caseItemInd) => {
                     const labelComp = (<>
@@ -69,20 +123,13 @@ function CaseEditPage() {
                     );
                 })}
                 <label className="question">Issue Time</label>
-                <input className="form-control datetimepicker" defaultValue={pageState.info.downTime} name="issue_time" ref={register({ required: true })} />
+                {pageState.info.downTime && <input className="form-control datetimepicker" defaultValue={pageState.info.downTime} name="issue_time" ref={register({ required: true })} />}
 
                 <label className="question">Concerned Agencies</label>
                 {/*https://medium.com/@lahiru0561/react-select-with-custom-label-and-custom-search-122bfe06b6d7*/}
 
                 {pageState.users.length > 0 &&
                     <Select value={agencySelectValue} onChange={handleAgenciesChange}
-                        defaultValue={
-                            pageState.users.filter(
-                                us => { return pageState.info.concernedAgencies.some(ca => ca.userId == us.id) }
-                            ).map(
-                                usr => { return { label: usr.userName, value: usr.id } }
-                            )
-                        }
                         isMulti
                         options={pageState.users.map(us => { return { label: us.userName, value: us.id } })}
                         className="basic-multi-select"
@@ -91,30 +138,35 @@ function CaseEditPage() {
                     />}
 
                 <label className="question">Comments</label><br />
-                {pageState.info.comments.length == 0 && <span>No comments recieved yet...</span>}
+                {pageState.info.comments.length == 0 && <div><span>No comments recieved yet...</span><br /></div>}
                 {pageState.users.length > 0 &&
                     pageState.info.comments.map((comm, commInd) => {
-                        return (<p>{`${comm.created} ${pageState.users.find(usr => (usr.id == comm.createdById)).userName} ${comm.tag.toString()} ${comm.comment}`}</p>)
+                        return (
+                            <div>
+                                <span>{`${dateFormat(comm.created, 'dd-mmm-yyyy HH:MM')} by ${pageState.users.find(usr => (usr.id == comm.createdById)).userName} [${pageState.commentTagTypes[comm.tag]}]`}</span>
+                                <br />
+                                <span>{`${comm.comment}`}</span>
+                                <button className="btn btn-link" onClick={onCommDel(comm.id)}>delete</button>
+                                <br />
+                            </div>
+                        )
                     }
                     )
                 }
                 <br />
-                <button type="submit">Submit</button>
+                <button className="btn btn btn-success" type="submit">Save Changes</button>
             </form>
             <form onSubmit={handleSubmit(onCommentSubmit)}>
-                <span>Tag</span>
-                {pageState.commentTagTypes.length > 0 &&
-                    <Select value={tagSelectValue} onChange={handleTagChange}
-                        className="basic-multi-select"
-                        classNamePrefix="select"
-                        options={pageState.commentTagTypes.map(tt => { return { label: tt, value: tt } })}
-                        name="commTag"
-                    />}
-
+                <span className="h4">New Comment</span>
                 <br />
-                <span>Comment</span>
-                <textarea name="comm" ref={register}></textarea>
-                <button type="submit">Add Comment</button>
+                <span>Tag</span>
+                <select className="select" name="commTag" ref={register({ required: true })}>
+                    {pageState.commentTagTypes.map(tt => { return <option value={tt}>{tt}</option> })}
+                </select>
+                <br />
+                <textarea name="comm" ref={register} style={{ minWidth: "60%" }}></textarea>
+                <br />
+                <button className="btn btn-sm btn-info" type="submit">Add Comment</button>
             </form>
         </>
     );

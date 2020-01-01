@@ -68,7 +68,8 @@
                 }
                 <div class="form-group">
                     <label asp-for="ConcernedAgencyId" class="control-label question"></label>
-                    <select asp-for="ConcernedAgencyId" class="form-control" asp-items="ViewBag.UserId"></select>
+                    <select multiple class="form-control multi-select" size="6" asp-items="ViewBag.UserId" id="ConcernedAgencyId_Multi" onchange="setMultiSelValue(this)"></select>
+                    <input asp-for="ConcernedAgencyId" type="hidden" />
                     <span asp-validation-for="ConcernedAgencyId" class="text-danger"></span>
                 </div>
                 <hr />
@@ -80,6 +81,7 @@
 </div>
 
 @section Scripts {
+    <link rel="stylesheet" href="~/lib/vanilla-multiselect/vanillaSelectBox.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <style>
         .question {
@@ -88,11 +90,23 @@
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="~/lib/vanilla-multiselect/vanillaSelectBox.js"></script>
     @await Html.PartialAsync("_ValidationScriptsPartial")
     <script>
         $(".datetimepicker").flatpickr({
             enableTime: true,
             dateFormat: "Y-m-d H:i",
         });
+        var concernedAgencyMultiSelect = new vanillaSelectBox(".multi-select", { "maxHeight": 200, "search": true });
+        function setMultiSelValue(selObj) {
+            let result = [];
+            let collection = document.querySelectorAll("#" + selObj.id + " option");
+            collection.forEach(function (x) {
+                if (x.selected) {
+                    result.push(x.value);
+                }
+            });
+            document.getElementById(selObj.id.slice(0, -6)).value = result;
+        }
     </script>
 }

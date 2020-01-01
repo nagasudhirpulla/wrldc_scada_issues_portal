@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.UI.Services;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
@@ -15,7 +16,7 @@ namespace ScadaIssuesPortal.App
         {
             EmailConfig = emailConfig;
         }
-        public async Task SendEmailAsync(string email, string subject, string htmlMessage)
+        public async Task SendEmailAsync(string emailAddresses, string subject, string htmlMessage)
         {
             Console.WriteLine("Sending mail...");
 
@@ -26,7 +27,18 @@ namespace ScadaIssuesPortal.App
                 IsBodyHtml = true,
                 Body = htmlMessage
             };
-            message.To.Add(email);
+            // we assume emails will be sepated by ";"
+            foreach (string emailId in emailAddresses.Split(";"))
+            {
+                message.To.Add(emailId);
+            }
+            
+            // since we are not getting entries in sent mail, we will add mail manually
+            if (!emailAddresses.Split(";").ToList().Any(em => em == EmailConfig.MailAddress))
+            {
+                // add sender mail if not present in to addresses
+                message.To.Add(EmailConfig.MailAddress);
+            }
 
             using (var smtpClient = new SmtpClient())
             {

@@ -24,7 +24,32 @@ export const addComment = async (baseAddr: string, comment: IComment): Promise<b
             },
             body: JSON.stringify(comment)
         });
-        const respJSON = await resp.json() as {};
+        if (resp.status != 200) {
+            throw Error(await resp.text())
+        }
+        const respJSON = await resp.json() as IComment;
+        console.log("new comment response");
+        console.log(respJSON);
+        return true
+    } catch (e) {
+        console.log(e);
+        return false;
+    }
+}
+
+export const delComment = async (baseAddr: string, commId: number): Promise<boolean> => {
+    try {
+        const resp = await fetch(`${baseAddr}/api/caseEditUI/deleteComment/${commId}`, {
+            method: 'delete',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+        if (resp.status != 200) {
+            throw Error(await resp.text())
+        }
+        const respJSON = await resp.json() as IComment;
+        console.log("delete comment response");
         console.log(respJSON);
         return true
     } catch (e) {

@@ -25,12 +25,13 @@ namespace ScadaIssuesPortal.Web.Controllers
         private readonly ILogger<ReportingCasesController> _logger;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ApplicationDbContext _context;
-
-        public CaseEditUIController(ILogger<ReportingCasesController> logger, ApplicationDbContext dbContext, UserManager<IdentityUser> userManager)
+        private readonly IEmailSender _emailSender;
+        public CaseEditUIController(ILogger<ReportingCasesController> logger, ApplicationDbContext dbContext, UserManager<IdentityUser> userManager, IEmailSender emailSender)
         {
             _userManager = userManager;
             _logger = logger;
             _context = dbContext;
+            _emailSender = emailSender;
         }
 
         [HttpGet("commentTags")]
@@ -83,6 +84,98 @@ namespace ScadaIssuesPortal.Web.Controllers
                 return Unauthorized();
             }
             return repCase;
+        }
+
+        [HttpPost("{id}")]
+        public async Task<ActionResult<ReportingCase>> EditCaseItem(int? id, [FromBody]ReportingCase vm)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            // get the reporting case
+            ReportingCase repCase = await _context.ReportingCases.Include(rc => rc.ConcernedAgencies)
+                                            .SingleOrDefaultAsync(rc => rc.Id == id);
+            if (repCase == null)
+            {
+                return NotFound();
+            }
+
+            // update the reporting case
+            repCase.ResolutionTime = vm.ResolutionTime;
+            repCase.DownTime = vm.DownTime;
+            repCase.CaseItems = vm.CaseItems;
+            try
+            {
+                _context.Update(repCase);
+                await _context.SaveChangesAsync();
+
+
+                // get the concerned agency Ids
+                List<ReportingCaseConcerned> existingconcernedAgencies = await _context.ReportingCaseConcerneds
+                                                    .Where(rcc => rcc.ReportingCaseId == id)
+                                                    .ToListAsync();
+
+                foreach (ReportingCaseConcerned conAgency in existingconcernedAgencies)
+                {
+                    if (!vm.ConcernedAgencies.Any(ca => ca.UserId == conAgency.UserId))
+                    {
+                        //check if existing concerned agency is deleted
+                        _context.ReportingCaseConcerneds.Remove(conAgency);
+                        await _context.SaveChangesAsync();
+                        IdentityUser user = await _context.Users.FindAsync(conAgency.UserId);
+                        await _emailSender.SendEmailAsync(user.Email,
+                                "WRLDC SCADA Issue alert",
+                                $"Sir/Madam,<br>You are being removed from an issue with id <b>{repCase.Id}</b> in WRLDC SCADA issues portal." +
+                                "<br><br>For kind information please<br><br>Regards<br>IT WRLDC");
+                    }
+                }
+
+                foreach (ReportingCaseConcerned concernedAgency in vm.ConcernedAgencies)
+                {
+                    string concernedAgencyId = concernedAgency.UserId;
+                    if (!existingconcernedAgencies.Any(ca => ca.UserId == concernedAgencyId))
+                    {
+                        // check if we need to add a new concerned agency
+                        // _context.ReportingCaseConcerneds.Remove(conc);
+                        // await _context.SaveChangesAsync();
+                        ReportingCaseConcerned concerned = new ReportingCaseConcerned()
+                        {
+                            ReportingCaseId = repCase.Id,
+                            UserId = concernedAgencyId
+                        };
+                        _context.Add(concerned);
+                        int numInserted = await _context.SaveChangesAsync();
+                        IdentityUser user = await _context.Users.FindAsync(concernedAgencyId);
+                        string caseDetail = String.Join("<br>", repCase.CaseItems.Select(ci => $"{ci.Question} - {ci.Response}").ToArray());
+                        await _emailSender.SendEmailAsync(user.Email,
+                                "WRLDC SCADA Issue alert",
+                                $"Sir/Madam,<br>You are being associated with an issue with id <b>{repCase.Id}</b> in WRLDC SCADA issues portal." +
+                                "<br><b>Issue Details</b>" +
+                                $"<br>{caseDetail}" +
+                                "<br><br>For kind information please<br><br>Regards<br>IT WRLDC");
+                    }
+                }
+                return Ok(repCase);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                // check if the we are trying to edit was already deleted due to concurrency
+                if (!_context.ReportingCases.Any(rc => rc.Id == id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
         }
 
         [HttpPost("{id}/addComment")]
@@ -152,9 +245,10 @@ namespace ScadaIssuesPortal.Web.Controllers
             }
 
             // add new comment
-            _context.ReportingCaseComments.Add(new ReportingCaseComment { Comment = vm.Comment, Tag = (CommentTag)Enum.Parse(typeof(CommentTag), vm.Tag), ReportingCaseId = repCase.Id });
+            ReportingCaseComment newComm = new ReportingCaseComment() { Comment = vm.Comment, Tag = vm.Tag, ReportingCaseId = repCase.Id };
+            _context.ReportingCaseComments.Add(newComm);
             await _context.SaveChangesAsync();
-            return Ok();
+            return Ok(newComm);
         }
 
         [HttpDelete("deleteComment/{id}")]

@@ -7,22 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="wwwroot\js\case_manage_ui_app\src\actions\actionTypes.ts" />
-    <Content Remove="wwwroot\js\case_manage_ui_app\src\case_edit_ui.tsx" />
-    <Content Remove="wwwroot\js\case_manage_ui_app\src\components\caseEditPage.tsx" />
-    <Content Remove="wwwroot\js\case_manage_ui_app\src\initial_states\caseEditPageInitState.tsx" />
-    <Content Remove="wwwroot\js\case_manage_ui_app\src\reducers\caseEditPageReducer.ts" />
-    <Content Remove="wwwroot\js\case_manage_ui_app\src\server_mediators\case_data.tsx" />
-    <Content Remove="wwwroot\js\case_manage_ui_app\src\server_mediators\comments.tsx" />
-    <Content Remove="wwwroot\js\case_manage_ui_app\src\server_mediators\users.tsx" />
-    <Content Remove="wwwroot\js\case_manage_ui_app\src\type_defs\ICaseEditPageState.ts" />
-    <Content Remove="wwwroot\js\case_manage_ui_app\src\type_defs\ICaseItem.ts" />
-    <Content Remove="wwwroot\js\case_manage_ui_app\src\type_defs\IComment.ts" />
-    <Content Remove="wwwroot\js\case_manage_ui_app\src\type_defs\IConcernedAgency.ts" />
-    <Content Remove="wwwroot\js\case_manage_ui_app\src\uitls\dateUtils.tsx" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\build-info.json" />
     <Content Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\package.json" />
     <Content Include="wwwroot\js\case_manage_ui_app\node_modules\react\build-info.json" />
@@ -120,30 +104,62 @@
 
 
   <ItemGroup>
-    <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\actions\actionTypes.ts" />
-    <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\case_edit_ui.tsx" />
-    <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\components\caseEditPage.tsx" />
-    <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\initial_states\caseEditPageInitState.tsx" />
-    <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\reducers\caseEditPageReducer.ts" />
-    <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\server_mediators\comments.tsx" />
-    <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\server_mediators\users.tsx" />
-    <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\server_mediators\case_data.tsx" />
+    <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\actions\actionTypes.ts">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\case_edit_ui.tsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\components\caseEditPage.tsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\initial_states\caseEditPageInitState.tsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\reducers\caseEditPageReducer.ts">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\server_mediators\comments.tsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\server_mediators\users.tsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\server_mediators\case_data.tsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\type_defs\IComment.ts">
       <SubType>Code</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </TypeScriptCompile>
     <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\type_defs\IConcernedAgency.ts">
       <SubType>Code</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </TypeScriptCompile>
     <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\type_defs\ICaseItem.ts">
       <SubType>Code</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\type_defs\ICaseEditPageState.ts" />
-    <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\uitls\dateUtils.tsx" />
+    <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\type_defs\ICaseEditPageState.ts">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\uitls\dateUtils.tsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </TypeScriptCompile>
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="AppData\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="wwwroot\js\case_manage_ui_app\dist\**">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\js\case_manage_ui_app\src\**">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 </Project>

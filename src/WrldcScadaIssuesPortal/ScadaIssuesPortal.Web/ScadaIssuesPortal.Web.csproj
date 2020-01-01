@@ -141,4 +141,9 @@
     <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\uitls\dateUtils.tsx" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="AppData\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 </Project>

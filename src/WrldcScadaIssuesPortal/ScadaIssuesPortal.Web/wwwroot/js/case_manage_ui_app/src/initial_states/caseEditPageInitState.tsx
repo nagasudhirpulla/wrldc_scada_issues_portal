@@ -12,7 +12,7 @@ const initState: ICaseEditPageState = {
         createdById: "6fa0893c-e8bc-43cd-99a2-3890ac0a55fd",
         id: 25
     },
-    baseAddr: "",
+    baseAddr: "../..",
     users: [],
     commentTagTypes: []
 };

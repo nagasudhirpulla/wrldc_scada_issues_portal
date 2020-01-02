@@ -137,13 +137,17 @@ function CaseEditPage() {
                         name="concernedAgencies"
                     />}
 
-                <label className="question">Comments</label><br />
                 {pageState.info.comments.length == 0 && <div><span>No comments recieved yet...</span><br /></div>}
                 {pageState.users.length > 0 &&
-                    pageState.info.comments.map((comm, commInd) => {
+                    pageState.info.comments.sort((a, b) => (a.created > b.created) ? 1 : -1).map((comm, commInd) => {
                         return (
                             <div>
-                                <span>{`${dateFormat(comm.created, 'dd-mmm-yyyy HH:MM')} by ${pageState.users.find(usr => (usr.id == comm.createdById)).userName} [${pageState.commentTagTypes[comm.tag]}]`}</span>
+                                <span style={{ fontSize: "small" }}>
+                                    {(comm.tag == 1) && <span className="badge badge-danger"><i className="fas fa-ban"></i>{` ${pageState.commentTagTypes[comm.tag]}`}</span>}
+                                    {(comm.tag == 2) && <span className="badge badge-success"><i className="fas fa-dot-circle"></i>{` ${pageState.commentTagTypes[comm.tag]}`}</span>}
+                                    <b>{" "}{pageState.users.find(usr => (usr.id == comm.createdById)).userName}</b>
+                                    {` on ${dateFormat(comm.created, 'mmm dd, yyyy HH:MM')}`}
+                                </span>
                                 <br />
                                 <span>{`${comm.comment}`}</span>
                                 <button className="btn btn-link" onClick={onCommDel(comm.id)}>delete</button>
@@ -156,15 +160,17 @@ function CaseEditPage() {
                 <br />
                 <button className="btn btn btn-success" type="submit">Save Changes</button>
             </form>
+            <br/>
+            <br />
             <form onSubmit={handleSubmit(onCommentSubmit)}>
                 <span className="h4">New Comment</span>
                 <br />
-                <span>Tag</span>
+                <span>Tag{" "}</span>
                 <select className="select" name="commTag" ref={register({ required: true })}>
                     {pageState.commentTagTypes.map(tt => { return <option value={tt}>{tt}</option> })}
                 </select>
                 <br />
-                <textarea name="comm" ref={register} style={{ minWidth: "60%" }}></textarea>
+                <textarea name="comm" ref={register} style={{ minWidth: "60%" }} placeholder="Enter Comment..."></textarea>
                 <br />
                 <button className="btn btn-sm btn-info" type="submit">Add Comment</button>
             </form>

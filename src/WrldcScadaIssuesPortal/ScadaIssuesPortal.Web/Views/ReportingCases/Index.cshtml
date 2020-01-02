@@ -3,26 +3,29 @@
 @using ScadaIssuesPortal.Core.Entities;
 @using MoreLinq.Extensions;
 @{
-    ViewData["Title"] = "Reporting Cases";
+    ViewData["Title"] = "Issues";
 }
 
 <p>
     <a asp-controller="ReportingCases" asp-action="Create">Report New Issue</a>
 </p>
 
-<table class="table table-bordered table-hover table-responsive-md">
+<table id="issues_table" class="display table table-bordered table-hover table-responsive-md" style="width:100%">
     <thead>
         <tr>
-            <th>
+            <th style="max-width:2em;">
+                Created
+            </th>
+            <th style="max-width:2em;">
                 Id
             </th>
-            <th>
-                Creation Time
-            </th>
-            <th>
+            <th style="max-width:6em;">
                 Created By
             </th>
-            <th>
+            <th style="max-width:8em;">
+                @Html.DisplayNameFor(model => model[0].ConcernedAgencies)
+            </th>
+            <th style="max-width:2em;">
                 Issue Time
             </th>
             <th>
@@ -31,19 +34,13 @@
             <th>
                 Comments
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model[0].ResolutionTime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model[0].ConcernedAgencies)
-            </th>
-            <th>
+            <th style="max-width:4em;">
                 Status
             </th>
-            <th>
-                Last Updated Time
+            <th style="max-width:2em;">
+                Last Updated
             </th>
-            <th>Actions</th>
+            <th style="max-width:2em;">Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -51,19 +48,22 @@
         {
             CommentTag Tag = (item.Comments.Count() > 0) ? item.Comments.MaxBy(i => i.Created).First().Tag : CommentTag.Normal;
             <tr>
-                <td>
+                <td style="max-width:2em;font-size:0.9em">
+                    @item.CreatedAt.ToString("yyyy MMM dd HH:mm")
+                </td>
+                <td style="max-width:2em;font-size:0.8em">
                     @item.Id
                 </td>
-                <td>
-                    @item.CreatedAt.ToString("dd MMM yyyy HH:mm")
-                </td>
-                <td>
+                <td style="max-width:6em;">
                     @item.CreatedBy.UserName
                 </td>
-                <td>
-                    @item.DownTime.ToString("dd MMM yyyy HH:mm")
+                <td style="max-width:8em;font-size:0.95em">
+                    @(item.ConcernedAgencies.Count > 0 ? item.ConcernedAgencies.Select(concerned => concerned.User.UserName).Aggregate((i, j) => i + ", " + j) : "")
                 </td>
-                <td>
+                <td style="max-width:2em;font-size:0.9em">
+                    @item.DownTime.ToString("yyyy MMM dd HH:mm")
+                </td>
+                <td style="max-width:20em;">
                     @foreach (var caseItem in item.CaseItems)
                     {
                         <span>
@@ -72,28 +72,48 @@
                         <br>
                     }
                 </td>
-                <td>
-                    @foreach (var comm in item.Comments)
+                <td style="max-width:20em;">
+                    @foreach (var comm in item.Comments.OrderByDescending(c => c.Created))
                     {
-                        <span>
-                            @(comm.Tag.Equals(CommentTag.Normal) ? $"{comm.Comment}" : $"({comm.Tag.ToString()}) - {comm.Comment}")
+
+                        <span class="comment_info">
+                            @if (comm.Tag.Equals(CommentTag.Closed))
+                            {
+                                <span class="badge badge-danger"><i class="fas fa-ban"></i></span>
+                            }
+                            @if (comm.Tag.Equals(CommentTag.Reopened))
+                            {
+                                <span class="badge badge-success"><i class="fas fa-dot-circle"></i></span>
+                            }
+                        </span>
+                        <span class="comment_info">
+                            <b>@comm.CreatedBy.UserName</b> on @comm.Created.ToString("MMM dd, yyyy HH:mm")
+                        </span>
+                        <br />
+                        <span style="font-size:0.9em">
+                            @($"{comm.Comment.ToString()}")
                         </span>
                         <br>
                     }
                 </td>
-                <td>
-                    @((item.ResolutionTime == default) ? "" : item.ResolutionTime.ToString("dd-MMM-yyyy HH:mm"))
+                <td style="max-width:4em;">
+                    @if (Tag.Equals(CommentTag.Closed))
+                    {
+                        <span class="badge badge-danger">Closed</span>
+                    }
+                    @if (Tag.Equals(CommentTag.Reopened))
+                    {
+                        <span class="badge badge-success">Reopened</span>
+                    }
+                    @if (Tag.Equals(CommentTag.Normal))
+                    {
+                        <span class="badge badge-info">Open</span>
+                    }
                 </td>
-                <td>
-                    @(item.ConcernedAgencies.Count > 0 ? item.ConcernedAgencies.Select(concerned => concerned.User.UserName).Aggregate((i, j) => i + ", " + j) : "")
+                <td style="max-width:2em;font-size:0.9em">
+                    @item.UpdatedAt.ToString("yyyy-MMM-dd HH:mm")
                 </td>
-                <td>
-                    @(Tag.Equals(CommentTag.Normal) ? "" : Tag.ToString())
-                </td>
-                <td>
-                    @item.UpdatedAt.ToString("dd-MMM-yyyy HH:mm")
-                </td>
-                <td>
+                <td style="max-width:2em;">
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
                     @if (User.IsInRole(SecurityConstants.AdminRoleString))
                     {
@@ -103,4 +123,97 @@
             </tr>
         }
     </tbody>
+    <tfoot>
+        <tr>
+            <th style="max-width:2em">
+                Created
+            </th>
+            <th style="max-width:2em;">
+                Id
+            </th>
+            <th style="max-width:6em;">
+                Created By
+            </th>
+            <th style="max-width:8em;">
+                @Html.DisplayNameFor(model => model[0].ConcernedAgencies)
+            </th>
+            <th style="max-width:2em;">
+                Issue Time
+            </th>
+            <th>
+                Issue Info
+            </th>
+            <th>
+                Comments
+            </th>
+            <th style="max-width:4em;">
+                Status
+            </th>
+            <th style="max-width:2em;">
+                Last Updated
+            </th>
+            @*<th style="max-width:2em;">Actions</th>*@
+        </tr>
+    </tfoot>
 </table>
+
+@section Scripts{
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.18/fc-3.2.5/fh-3.1.4/r-2.2.2/datatables.min.css" />
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.18/fc-3.2.5/fh-3.1.4/r-2.2.2/datatables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.flash.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.print.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // https://datatables.net/examples/api/multi_filter.html
+            // Setup - add a text input to each footer cell
+            $('#issues_table tfoot th').each(function () {
+                var title = $(this).text();
+                $(this).html('<input type="text" placeholder="Search" />');
+            });
+
+            var table = $('#issues_table').DataTable({
+                fixedHeader: true,
+                "lengthMenu": [[10, 20, 50, 100, -1], [10, 20, 50, 100, "All"]],
+                "pageLength": 10,
+                dom: 'Bfrtip',
+                "order": [[0, "desc"]],
+                buttons: ['pageLength', 'copy', 'csv', 'excel', 'pdf', 'print']
+            });
+
+            var r = $('#issues_table tfoot tr');
+            r.find('th').each(function () {
+                $(this).css('padding', '3px');
+            });
+
+            $('#issues_table thead').append(r);
+
+            // Apply the filter
+            // https://www.jqueryscript.net/demo/DataTables-Jquery-Table-Plugin/examples/api/multi_filter.html
+            $("#issues_table thead input").on('keyup change', function () {
+                table
+                    .column($(this).parent().index() + ':visible')
+                    .search(this.value)
+                    .draw();
+            });
+
+        });
+    </script>
+    <style>
+        thead input {
+            padding: 2px;
+            box-sizing: border-box;
+            font-size: small;
+            width: 100%
+        }
+
+        .comment_info {
+            font-size: smaller
+        }
+    </style>
+}

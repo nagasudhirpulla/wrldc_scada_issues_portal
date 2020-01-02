@@ -94,7 +94,7 @@ export const useCaseEditPageReducer = (initState: ICaseEditPageState): [ICaseEdi
 
 
     useEffect(() => {
-        document.title = `Id is ${pageState.info.id}`;
+        document.title = `Issue id ${pageState.info.id}`;
         (async function () {
             const caseInfo = await getCaseInfo(pageState.baseAddr, pageState.info.id);
             pageStateDispatch({

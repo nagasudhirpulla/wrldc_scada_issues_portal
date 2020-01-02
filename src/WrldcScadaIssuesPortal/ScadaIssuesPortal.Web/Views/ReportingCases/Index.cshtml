@@ -7,6 +7,7 @@
 }
 
 <p>
+    <label><input type="checkbox" checked onchange="updateClosedIssuesDisplay()" id="closedIssuesHideChkBx"> Hide Closed Issues</label>
     <a asp-controller="ReportingCases" asp-action="Create">Report New Issue</a>
 </p>
 
@@ -34,7 +35,7 @@
             <th>
                 Comments
             </th>
-            <th style="max-width:4em;">
+            <th style="max-width:4em;" class="openStatus">
                 Status
             </th>
             <th style="max-width:2em;">
@@ -169,15 +170,31 @@
     <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.print.min.js"></script>
     <script>
+        var issues_table;
+        function updateClosedIssuesDisplay() {
+            var chkBxEl = document.getElementById("closedIssuesHideChkBx");
+            if (chkBxEl.checked) {
+                issues_table
+                    .columns('.openStatus')
+                    .search('open')
+                    .draw();
+            } else {
+                issues_table
+                    .columns('.openStatus')
+                    .search('')
+                    .draw();
+            }
+        }
+
         $(document).ready(function () {
             // https://datatables.net/examples/api/multi_filter.html
             // Setup - add a text input to each footer cell
             $('#issues_table tfoot th').each(function () {
-                var title = $(this).text();
+                //var title = $(this).text();
                 $(this).html('<input type="text" placeholder="Search" />');
             });
 
-            var table = $('#issues_table').DataTable({
+            issues_table = $('#issues_table').DataTable({
                 fixedHeader: true,
                 "lengthMenu": [[10, 20, 50, 100, -1], [10, 20, 50, 100, "All"]],
                 "pageLength": 10,
@@ -196,12 +213,12 @@
             // Apply the filter
             // https://www.jqueryscript.net/demo/DataTables-Jquery-Table-Plugin/examples/api/multi_filter.html
             $("#issues_table thead input").on('keyup change', function () {
-                table
+                issues_table
                     .column($(this).parent().index() + ':visible')
                     .search(this.value)
                     .draw();
             });
-
+            updateClosedIssuesDisplay();
         });
     </script>
     <style>

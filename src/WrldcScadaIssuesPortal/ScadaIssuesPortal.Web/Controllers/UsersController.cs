@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using ScadaIssuesPortal.Web.Extensions;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
+using ScadaIssuesPortal.App.Security;
 
 namespace ScadaIssuesPortal.Web.Controllers
 {
@@ -20,13 +21,13 @@ namespace ScadaIssuesPortal.Web.Controllers
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ILogger _logger;
-        private readonly IConfiguration _configuration;
-        public UsersController(UserManager<IdentityUser> userManager, ILogger<UsersController> logger, IConfiguration configuration)
+        private readonly IdentityInit _identityInit;
+        public UsersController(UserManager<IdentityUser> userManager, ILogger<UsersController> logger, IdentityInit identityInit)
         {
             // acquire user manager via dependency injection
             _userManager = userManager;
             _logger = logger;
-            _configuration = configuration;
+            _identityInit = identityInit;
         }
 
         public async Task<IActionResult> Index()
@@ -40,7 +41,7 @@ namespace ScadaIssuesPortal.Web.Controllers
                 // get user is of admin role
                 //bool isSuperAdmin = (await _userManager.GetRolesAsync(user)).Any(r => r == SecurityConstants.AdminRoleString);
                 // todo make identity init  singleton service like email config so as to avoid raw strings usage
-                bool isSuperAdmin = (user.UserName == _configuration["IdentityInit:AdminUserName"]);
+                bool isSuperAdmin = (user.UserName == _identityInit.AdminUserName);
                 if (!isSuperAdmin)
                 {
                     // add user to vm only if not admin

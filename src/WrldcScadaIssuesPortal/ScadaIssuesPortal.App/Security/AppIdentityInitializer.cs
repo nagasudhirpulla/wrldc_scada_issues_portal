@@ -13,30 +13,27 @@ namespace ScadaIssuesPortal.App.Security
 
         public UserManager<IdentityUser> UserManager { get; set; }
         public RoleManager<IdentityRole> RoleManager { get; set; }
-        public IConfiguration Configuration { get; set; }
+        public IdentityInit IdentityInit { get; set; }
 
         /**
          * This method seeds admin, guest role and admin user
          * **/
         public void SeedData()
         {
-            // get admin params from configuration
-            UserInitVariables initVariables = new UserInitVariables();
-            initVariables.InitializeFromConfig(Configuration);
             // seed roles
             SeedUserRoles(RoleManager);
             // seed admin user
-            SeedAdminUser(UserManager, initVariables);
+            SeedAdminUser(UserManager);
         }
 
         /**
          * This method seeds admin user
          * **/
-        public void SeedAdminUser(UserManager<IdentityUser> userManager, UserInitVariables initVariables)
+        public void SeedAdminUser(UserManager<IdentityUser> userManager)
         {
-            string AdminUserName = initVariables.AdminUserName;
-            string AdminEmail = initVariables.AdminEmail;
-            string AdminPassword = initVariables.AdminPassword;
+            string AdminUserName = IdentityInit.AdminUserName;
+            string AdminEmail = IdentityInit.AdminEmail;
+            string AdminPassword = IdentityInit.AdminPassword;
 
             // check if admin user doesn't exist
             if (userManager.FindByNameAsync(AdminUserName).Result == null)

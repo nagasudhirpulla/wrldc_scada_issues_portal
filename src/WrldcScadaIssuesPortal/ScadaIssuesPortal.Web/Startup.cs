@@ -63,9 +63,15 @@ namespace ScadaIssuesPortal.Web
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
 
+            // add email settings from config as a singleton service
             EmailConfiguration emailConfig = new EmailConfiguration();
             Configuration.Bind("EmailSettings", emailConfig);
             services.AddSingleton(emailConfig);
+
+            // add super admin user details from config as a singleton service
+            IdentityInit identityInit = new IdentityInit();
+            Configuration.Bind("IdentityInit", identityInit);
+            services.AddSingleton(identityInit);
 
             services.AddScoped<ICurrentUserService, CurrentUserService>();
 
@@ -81,7 +87,7 @@ namespace ScadaIssuesPortal.Web
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, IdentityInit identityInit)
         {
             if (env.IsDevelopment())
             {
@@ -107,7 +113,7 @@ namespace ScadaIssuesPortal.Web
             {
                 UserManager = userManager,
                 RoleManager = roleManager,
-                Configuration = Configuration
+                IdentityInit = identityInit
             };
             identityInitializer.SeedData();
 

@@ -11,5 +11,5 @@ namespace ScadaIssuesPortal.App
         public string Domain { get; set; }
         public string MailAddress { get; set; }
         public string HostName { get; set; }
-    }
+    }    
 }

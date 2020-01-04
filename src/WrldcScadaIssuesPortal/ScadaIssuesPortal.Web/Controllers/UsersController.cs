@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ScadaIssuesPortal.Web.Extensions;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Configuration;
 
 namespace ScadaIssuesPortal.Web.Controllers
 {
@@ -18,11 +20,13 @@ namespace ScadaIssuesPortal.Web.Controllers
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ILogger _logger;
-        public UsersController(UserManager<IdentityUser> userManager, ILogger<UsersController> logger)
+        private readonly IConfiguration _configuration;
+        public UsersController(UserManager<IdentityUser> userManager, ILogger<UsersController> logger, IConfiguration configuration)
         {
             // acquire user manager via dependency injection
             _userManager = userManager;
             _logger = logger;
+            _configuration = configuration;
         }
 
         public async Task<IActionResult> Index()
@@ -34,15 +38,24 @@ namespace ScadaIssuesPortal.Web.Controllers
             foreach (IdentityUser user in users)
             {
                 // get user is of admin role
-                bool isAdmin = (await _userManager.GetRolesAsync(user)).Any(r => r == SecurityConstants.AdminRoleString);
-                if (!isAdmin)
+                //bool isSuperAdmin = (await _userManager.GetRolesAsync(user)).Any(r => r == SecurityConstants.AdminRoleString);
+                // todo make identity init  singleton service like email config so as to avoid raw strings usage
+                bool isSuperAdmin = (user.UserName == _configuration["IdentityInit:AdminUserName"]);
+                if (!isSuperAdmin)
                 {
                     // add user to vm only if not admin
+                    string userRole = "";
+                    IList<string> existingRoles = await _userManager.GetRolesAsync(user);
+                    if (existingRoles.Count > 0)
+                    {
+                        userRole = existingRoles.ElementAt(0);
+                    }
                     vm.Users.Add(new UserListItemVM
                     {
                         UserId = user.Id,
                         Username = user.UserName,
-                        Email = user.Email
+                        Email = user.Email,
+                        UserRole = userRole
                     });
                 }
 
@@ -53,6 +66,7 @@ namespace ScadaIssuesPortal.Web.Controllers
         [HttpGet]
         public IActionResult Create()
         {
+            ViewData["UserRole"] = new SelectList(SecurityConstants.GetRoles());
             return View();
         }
 
@@ -66,14 +80,22 @@ namespace ScadaIssuesPortal.Web.Controllers
                 IdentityResult result = await _userManager.CreateAsync(user, vm.Password);
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User created a new account with password.");
+                    _logger.LogInformation($"Created new account for {user.UserName} with id {user.Id}");
+                    // check if role string is valid
+                    bool isValidRole = SecurityConstants.GetRoles().Contains(vm.UserRole);
+                    if (isValidRole)
+                    {
+                        await _userManager.AddToRoleAsync(user, vm.UserRole);
+                        _logger.LogInformation($"{vm.UserRole} role assigned to new user {user.UserName} with id {user.Id}");
+                    }
 
-                    return RedirectToAction(nameof(Index)).WithSuccess("Created a new user");
+                    return RedirectToAction(nameof(Index)).WithSuccess($"Created new user {user.UserName} {(isValidRole ? $"with role {vm.UserRole}" : "")}");
                 }
                 AddErrors(result);
             }
 
             // If we got this far, something failed, redisplay form
+            ViewData["UserRole"] = new SelectList(SecurityConstants.GetRoles());
             return View(vm);
         }
 
@@ -91,11 +113,19 @@ namespace ScadaIssuesPortal.Web.Controllers
                 return NotFound();
             }
 
+            IList<string> existingUserRoles = (await _userManager.GetRolesAsync(user));
+            string userRole = SecurityConstants.GuestRoleString;
+            if (existingUserRoles.Count > 0)
+            {
+                userRole = existingUserRoles.ElementAt(0);
+            }
             UserEditVM vm = new UserEditVM()
             {
                 Email = user.Email,
-                Username = user.UserName
+                Username = user.UserName,
+                UserRole = userRole
             };
+            ViewData["UserRole"] = new SelectList(SecurityConstants.GetRoles());
             return View(vm);
         }
 
@@ -162,6 +192,21 @@ namespace ScadaIssuesPortal.Web.Controllers
                     }
                 }
 
+                // change user role if not present in user
+                bool isValidRole = SecurityConstants.GetRoles().Contains(vm.UserRole);
+                List<string> existingUserRoles = (await _userManager.GetRolesAsync(user)).ToList();
+                bool isRoleChanged = !existingUserRoles.Any(r => r == vm.UserRole);
+                if (isValidRole)
+                {
+                    if (isRoleChanged)
+                    {
+                        // remove existing user roles if any
+                        await _userManager.RemoveFromRolesAsync(user, existingUserRoles);
+                        // add new Role to user from VM
+                        await _userManager.AddToRoleAsync(user, vm.UserRole);
+                    }
+                }
+
                 // check if we have any errors and redirect if successful
                 if (identityErrors.Count == 0)
                 {
@@ -174,6 +219,7 @@ namespace ScadaIssuesPortal.Web.Controllers
             }
 
             // If we got this far, something failed, redisplay form
+            ViewData["UserRole"] = new SelectList(SecurityConstants.GetRoles());
             return View(vm);
         }
 

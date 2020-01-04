@@ -11,6 +11,9 @@ namespace ScadaIssuesPortal.Web.Models
         [EmailAddress]
         public string Email { get; set; }
 
+        [Required]
+        public string UserRole { get; set; }
+
         [DataType(DataType.Password)]
         public string Password { get; set; }
 

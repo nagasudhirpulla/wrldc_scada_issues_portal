@@ -7,6 +7,7 @@ import { IAction } from "../type_defs/IAction";
 import { useReducer, useCallback, useEffect } from "react";
 import { IUserInfo } from "../type_defs/IUserInfo";
 import { ICaseInfo } from "../type_defs/ICaseInfo";
+import { createToast } from "../uitls/toastUtils";
 
 export const useCaseEditPageReducer = (initState: ICaseEditPageState): [ICaseEditPageState, React.Dispatch<IAction>] => {
     // create the reducer function
@@ -59,7 +60,7 @@ export const useCaseEditPageReducer = (initState: ICaseEditPageState): [ICaseEdi
                 console.log("newCommObj")
                 console.log(newCommObj)
                 const commRes = await addComment(pageState.baseAddr, newCommObj)
-                if (commRes == true) {
+                if (commRes.success == true) {
                     // we successfully created a comment!
                     // reload the whole case Object
                     const caseInfo = await getCaseInfo(pageState.baseAddr, pageState.info.id);
@@ -67,6 +68,9 @@ export const useCaseEditPageReducer = (initState: ICaseEditPageState): [ICaseEdi
                         type: actionTypes.setCaseInfoAction,
                         payload: caseInfo
                     });
+                } else {
+                    // alert(commRes.payload);
+                    createToast(commRes.payload, "error", {})
                 }
                 break;
             }
@@ -75,7 +79,7 @@ export const useCaseEditPageReducer = (initState: ICaseEditPageState): [ICaseEdi
                 console.log("deleting commId = ")
                 console.log(commId)
                 const commRes = await delComment(pageState.baseAddr, commId)
-                if (commRes == true) {
+                if (commRes.success == true) {
                     // we successfully created a comment!
                     // reload the whole case Object
                     const caseInfo = await getCaseInfo(pageState.baseAddr, pageState.info.id);
@@ -83,6 +87,9 @@ export const useCaseEditPageReducer = (initState: ICaseEditPageState): [ICaseEdi
                         type: actionTypes.setCaseInfoAction,
                         payload: caseInfo
                     });
+                } else {
+                    //alert(commRes.payload);
+                    createToast(commRes.payload, "error", {})
                 }
                 break;
             }

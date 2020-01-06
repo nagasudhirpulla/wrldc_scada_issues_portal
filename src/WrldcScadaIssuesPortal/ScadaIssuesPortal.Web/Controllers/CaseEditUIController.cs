@@ -107,6 +107,16 @@ namespace ScadaIssuesPortal.Web.Controllers
                 return NotFound();
             }
 
+            // get the logged in user id
+            string currUserId = _userManager.GetUserId(User);
+            // check if user is admin
+            bool isCurrUserAdmin = User.IsInRole(SecurityConstants.AdminRoleString);
+            // check if requesting user is creator / concerned agency for authorizing issue editing
+            if (!(isCurrUserAdmin || repCase.CreatedById == currUserId))
+            {
+                return Unauthorized();
+            }
+
             // update the reporting case
             repCase.ResolutionTime = vm.ResolutionTime;
             repCase.DownTime = vm.DownTime;

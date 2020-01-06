@@ -11,6 +11,8 @@
     <Content Include="wwwroot\js\case_manage_ui_app\node_modules\react-dom\package.json" />
     <Content Include="wwwroot\js\case_manage_ui_app\node_modules\react\build-info.json" />
     <Content Include="wwwroot\js\case_manage_ui_app\node_modules\react\package.json" />
+    <Content Include="wwwroot\js\case_manage_ui_app\node_modules\toastr\build\toastr.css" />
+    <Content Include="wwwroot\js\case_manage_ui_app\node_modules\toastr\build\toastr.min.css" />
   </ItemGroup>
 
   <ItemGroup>
@@ -74,6 +76,8 @@
     <None Include="wwwroot\js\case_manage_ui_app\node_modules\react\umd\react.development.js" />
     <None Include="wwwroot\js\case_manage_ui_app\node_modules\react\umd\react.production.min.js" />
     <None Include="wwwroot\js\case_manage_ui_app\node_modules\react\umd\react.profiling.min.js" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\toastr\build\toastr.js.map" />
+    <None Include="wwwroot\js\case_manage_ui_app\node_modules\toastr\build\toastr.min.js" />
   </ItemGroup>
 
 
@@ -143,7 +147,7 @@
     <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\type_defs\ICaseEditPageState.ts">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\uitls\dateUtils.tsx">
+    <TypeScriptCompile Include="wwwroot\js\case_manage_ui_app\src\uitls\toastUtils.tsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </TypeScriptCompile>
   </ItemGroup>

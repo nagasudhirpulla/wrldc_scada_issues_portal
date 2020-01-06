@@ -14,7 +14,8 @@ module.exports = {
     externals: {
         "react": "React",
         "react-dom": "ReactDOM",
-        jquery: 'jQuery'
+        jquery: 'jQuery',
+        "toastr": "toastr"
     },
 
     // Enable sourcemaps for debugging webpack's output.

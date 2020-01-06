@@ -15,7 +15,7 @@ export const getTagEnums = async (baseAddr: string): Promise<string[]> => {
     }
 }
 
-export const addComment = async (baseAddr: string, comment: IComment): Promise<boolean> => {
+export const addComment = async (baseAddr: string, comment: IComment): Promise<{ success: boolean, payload: any }> => {
     try {
         const resp = await fetch(`${baseAddr}/api/caseEditUI/${comment.reportingCaseId}/addComment`, {
             method: 'post',
@@ -30,14 +30,14 @@ export const addComment = async (baseAddr: string, comment: IComment): Promise<b
         const respJSON = await resp.json() as IComment;
         console.log("new comment response");
         console.log(respJSON);
-        return true
+        return { success: true, payload: {} }
     } catch (e) {
         console.log(e);
-        return false;
+        return { success: false, payload: e.message };
     }
 }
 
-export const delComment = async (baseAddr: string, commId: number): Promise<boolean> => {
+export const delComment = async (baseAddr: string, commId: number): Promise<{ success: boolean, payload: any }> => {
     try {
         const resp = await fetch(`${baseAddr}/api/caseEditUI/deleteComment/${commId}`, {
             method: 'delete',
@@ -51,9 +51,9 @@ export const delComment = async (baseAddr: string, commId: number): Promise<bool
         const respJSON = await resp.json() as IComment;
         console.log("delete comment response");
         console.log(respJSON);
-        return true
+        return { success: true, payload: {} }
     } catch (e) {
         console.log(e);
-        return false;
+        return { success: false, payload: e.message };
     }
 }

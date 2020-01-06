@@ -1,12 +1,10 @@
-# wrldc_scada_issues_portal
-scada issue tracking portal for wrldc
+This is the application server code for SCADA issues tracking portal for wrldc
 
 # Authorization rules
 
 ## Authorization rules for User management
 * There will be only one super-admin user with credentials as per the app config
-* super-admin can create / manage admin and guest users
-* admin users can create / manage admin and guest users
+* Only super-admin and admin users can create / manage admin and guest users
 * super-admin and admin users can change passwords / other details of any user
 
 ## Authorization rules for Issues

@@ -18,6 +18,9 @@ using ScadaIssuesPortal.Web.Extensions;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Configuration;
 using ScadaIssuesPortal.App;
+using Microsoft.AspNetCore.Http;
+using System.IO;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace ScadaIssuesPortal.Web.Controllers
 {
@@ -29,12 +32,14 @@ namespace ScadaIssuesPortal.Web.Controllers
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ApplicationDbContext _context;
         private readonly IEmailSender _emailSender;
-        public ReportingCasesController(ILogger<ReportingCasesController> logger, ApplicationDbContext dbContext, UserManager<IdentityUser> userManager, IEmailSender emailSender)
+        private readonly FolderPaths _folderPaths;
+        public ReportingCasesController(ILogger<ReportingCasesController> logger, ApplicationDbContext dbContext, UserManager<IdentityUser> userManager, IEmailSender emailSender, FolderPaths folderPaths)
         {
             _userManager = userManager;
             _logger = logger;
             _context = dbContext;
             _emailSender = emailSender;
+            _folderPaths = folderPaths;
         }
 
         public async Task<IActionResult> Index()
@@ -55,6 +60,38 @@ namespace ScadaIssuesPortal.Web.Controllers
                             .Where(rc => isAdmin || rc.ConcernedAgencies.Any(ca => ca.UserId == userId) || (rc.CreatedById == userId))
                             .OrderByDescending(rc => rc.CreatedAt).ToListAsync();
             return View(vm);
+        }
+
+        public async Task<IActionResult> Attachment(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return NotFound();
+            }
+            string filePath = Path.Combine(_folderPaths.AttachmentsFolder, id);
+            if (!System.IO.File.Exists(filePath))
+            {
+                return NotFound();
+            }
+            var memory = new MemoryStream();
+            using (var stream = new FileStream(filePath, FileMode.Open))
+            {
+                await stream.CopyToAsync(memory);
+            }
+            memory.Position = 0;
+
+            return File(memory, GetContentType(filePath));
+        }
+
+        private string GetContentType(string path)
+        {
+            var provider = new FileExtensionContentTypeProvider();
+            string contentType;
+            if (!provider.TryGetContentType(path, out contentType))
+            {
+                contentType = "application/octet-stream";
+            }
+            return contentType;
         }
 
         public async Task<IActionResult> Create()
@@ -106,6 +143,21 @@ namespace ScadaIssuesPortal.Web.Controllers
                 }
                 newCase.CaseItems = caseItems;
 
+                // Getting Attachment
+                IFormFile attachment = vm.Attachment;
+                // Saving Image on Server
+                if (attachment.Length > 0)
+                {
+                    // create a new filename with timestamp
+                    string attachmentPath = $"{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss")}_{Guid.NewGuid()}{Path.GetExtension(attachment.FileName)}";
+                    string filePath = Path.Combine(_folderPaths.AttachmentsFolder, attachmentPath);
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        attachment.CopyTo(fileStream);
+                        newCase.AttachmentName = attachment.FileName;
+                        newCase.AttachmentPath = attachmentPath;
+                    }
+                }
                 _context.Add(newCase);
                 int numInserted = await _context.SaveChangesAsync();
                 if (numInserted >= 1)

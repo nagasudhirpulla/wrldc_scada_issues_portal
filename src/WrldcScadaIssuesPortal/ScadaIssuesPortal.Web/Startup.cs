@@ -68,6 +68,11 @@ namespace ScadaIssuesPortal.Web
             Configuration.Bind("EmailSettings", emailConfig);
             services.AddSingleton(emailConfig);
 
+            // add folder path settings from config as a singleton service
+            FolderPaths folderPaths = new FolderPaths();
+            Configuration.Bind("FolderPaths", folderPaths);
+            services.AddSingleton(folderPaths);
+
             // add super admin user details from config as a singleton service
             IdentityInit identityInit = new IdentityInit();
             Configuration.Bind("IdentityInit", identityInit);

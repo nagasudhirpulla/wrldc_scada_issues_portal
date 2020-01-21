@@ -18,6 +18,9 @@ namespace ScadaIssuesPortal.Core.Entities
         public DateTime DownTime { get; set; }
         public DateTime ResolutionTime { get; set; }
 
+        public string AttachmentName { get; set; }
+        public string AttachmentPath { get; set; }
+
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
 

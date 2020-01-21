@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ScadaIssuesPortal.Data;
@@ -9,9 +10,10 @@ using ScadaIssuesPortal.Data;
 namespace ScadaIssuesPortal.Web.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200121055631_attachmentInCase")]
+    partial class attachmentInCase
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -284,10 +286,7 @@ namespace ScadaIssuesPortal.Web.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<string>("AttachmentName")
-                        .HasColumnType("text");
-
-                    b.Property<string>("AttachmentPath")
+                    b.Property<string>("AttachmentFilename")
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")

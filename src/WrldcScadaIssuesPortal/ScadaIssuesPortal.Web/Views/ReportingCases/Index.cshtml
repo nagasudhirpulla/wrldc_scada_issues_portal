@@ -38,6 +38,9 @@
             <th style="max-width:4em;" class="openStatus">
                 Status
             </th>
+            <th style="max-width:4em;">
+                Attachement
+            </th>
             <th style="max-width:2em;">
                 Last Updated
             </th>
@@ -109,6 +112,12 @@
                     @if (Tag.Equals(CommentTag.Normal))
                     {
                         <span class="badge badge-info">Open</span>
+                    }
+                </td>
+                <td style="max-width:4em;font-size:0.9em">
+                    @if (item.AttachmentPath != null)
+                    {
+                        <a asp-action="Attachment" asp-route-id="@item.AttachmentPath">@item.AttachmentName</a>
                     }
                 </td>
                 <td style="max-width:2em;font-size:0.9em">

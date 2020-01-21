@@ -62,7 +62,8 @@ namespace ScadaIssuesPortal.Web.Controllers
             return View(vm);
         }
 
-        public async Task<IActionResult> Attachment(string id)
+        [HttpGet("{id}/{name}")]
+        public async Task<IActionResult> Attachment(string id, string name)
         {
             if (string.IsNullOrWhiteSpace(id))
             {
@@ -80,7 +81,7 @@ namespace ScadaIssuesPortal.Web.Controllers
             }
             memory.Position = 0;
 
-            return File(memory, GetContentType(filePath));
+            return File(memory, GetContentType(filePath), name);
         }
 
         private string GetContentType(string path)

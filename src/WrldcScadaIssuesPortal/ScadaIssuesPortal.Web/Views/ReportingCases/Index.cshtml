@@ -117,7 +117,7 @@
                 <td style="max-width:4em;font-size:0.9em">
                     @if (item.AttachmentPath != null)
                     {
-                        <a asp-action="Attachment" asp-route-id="@item.AttachmentPath">@item.AttachmentName</a>
+                        <a asp-action="Attachment" asp-route-id="@item.AttachmentPath" asp-route-name="@item.AttachmentName">@item.AttachmentName</a>
                     }
                 </td>
                 <td style="max-width:2em;font-size:0.9em">

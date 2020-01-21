@@ -11,4 +11,6 @@ export interface ICaseInfo {
     createdAt: string;
     updatedAt: string;
     createdById: string;
+    attachmentName: string;
+    attachmentPath: string;
 }

@@ -1,5 +1,5 @@
 ﻿import { ICaseEditPageState } from "../type_defs/ICaseEditPageState";
-import { getCaseInfo, editCaseInfo } from "../server_mediators/case_data";
+import { getCaseInfo, editCaseInfo, delAttachment } from "../server_mediators/case_data";
 import { getUsers, getCurrentUser } from "../server_mediators/users";
 import { getTagEnums, addComment, delComment } from "../server_mediators/comments";
 import * as actionTypes from '../actions/actionTypes';
@@ -90,6 +90,26 @@ export const useCaseEditPageReducer = (initState: ICaseEditPageState): [ICaseEdi
                 } else {
                     //alert(commRes.payload);
                     createToast(commRes.payload, "error", {})
+                }
+                break;
+            }
+            case actionTypes.delAttachmentAction: {
+                const caseId = action.payload;
+                console.log("deleting attachment for case Id = ")
+                console.log(caseId)
+                //todo complete this
+                const delAttRes = await delAttachment(pageState.baseAddr, caseId)
+                if (delAttRes.success == true) {
+                    // we successfully deleted the attachment for given case id
+                    // reload the whole case Object
+                    const caseInfo = await getCaseInfo(pageState.baseAddr, pageState.info.id);
+                    pageStateDispatch({
+                        type: actionTypes.setCaseInfoAction,
+                        payload: caseInfo
+                    });
+                } else {
+                    //alert(commRes.payload);
+                    createToast(delAttRes.payload, "error", {})
                 }
                 break;
             }

@@ -292,7 +292,49 @@ namespace ScadaIssuesPortal.Web.Controllers
             return Ok(comment);
         }
 
-
+        [HttpDelete("attachment/{id}")]
+        public async Task<IActionResult> DeleteAttachement([FromRoute] int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            // get the reporting case
+            ReportingCase repCase = await _context.ReportingCases.SingleOrDefaultAsync(rc => rc.Id == id);
+            if (repCase == default)
+            {
+                return NotFound();
+            }
+            // get the logged in user id
+            string currUserId = _userManager.GetUserId(User);
+            // check if user is admin
+            bool isCurrUserAdmin = User.IsInRole(SecurityConstants.AdminRoleString);
+            // check if requesting user is creator / concerned agency for authorizing issue editing
+            if (!(isCurrUserAdmin || repCase.CreatedById == currUserId))
+            {
+                return Unauthorized();
+            }
+            repCase.AttachmentName = null;
+            repCase.AttachmentPath = null;
+            //todo delete file from storage
+            try
+            {
+                _context.Update(repCase);
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                // check if the we are trying to edit was already deleted due to concurrency
+                if (!_context.ReportingCases.Any(rc => rc.Id == id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
     }
-
 }

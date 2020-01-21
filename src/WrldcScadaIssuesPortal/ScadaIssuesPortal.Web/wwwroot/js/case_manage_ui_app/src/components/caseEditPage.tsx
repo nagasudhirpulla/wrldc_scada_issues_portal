@@ -80,6 +80,12 @@ function CaseEditPage() {
         });
     };
 
+    // on Attachment Delete submit
+    const onAttachmentDel = () => {
+        console.log(`deleleting attachment for reporting case id ${pageState.info.id}`);
+        pageStateDispatch({ type: actionTypes.delAttachmentAction, payload: pageState.info.id })
+    };
+
     // on New Comment form submit
     const onCommentSubmit = async data => {
         console.log("New Comment inp data");
@@ -158,9 +164,16 @@ function CaseEditPage() {
                     )
                 }
                 <br />
+                {pageState.info.attachmentName != null &&
+                    <>
+                        <span>Attachment - {pageState.info.attachmentName}</span>
+                        <button className="btn btn-sm btn-link" onClick={onAttachmentDel} style={{ color: 'red' }}>delete</button>
+                    </>
+                }
+                <br />
                 <button className="btn btn btn-success" type="submit">Save Changes</button>
             </form>
-            <br/>
+            <br />
             <br />
             <form onSubmit={handleSubmit(onCommentSubmit)}>
                 <span className="h4">New Comment</span>

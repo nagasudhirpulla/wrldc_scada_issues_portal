@@ -31,3 +31,22 @@ export const editCaseInfo = async (baseAddr: string, caseObj: ICaseInfo): Promis
         return null;
     }
 }
+
+export const delAttachment = async (baseAddr: string, caseId: number): Promise<{ success: boolean, payload: any }> => {
+    try {
+        const resp = await fetch(`${baseAddr}/api/caseEditUI/attachment/${caseId}`, {
+            method: 'delete',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+        if (resp.status != 200) {
+            throw Error(await resp.text())
+        }
+        console.log(`attachment successfully deleted for case Id = ${caseId}`);
+        return { success: true, payload: {} }
+    } catch (e) {
+        console.log(e);
+        return { success: false, payload: e.message };
+    }
+}

@@ -102,6 +102,20 @@ function CaseEditPage() {
         setValue("comm", "");
     };
 
+    // on New attachment form submit
+    const onAddAttachmentSubmit = async data => {
+        console.log("New attachment inp data");
+        console.log(data);
+        const formData = new FormData(document.getElementById("addAttachmentForm") as HTMLFormElement);
+        pageStateDispatch({
+            type: actionTypes.addAttachmentAction, payload: {
+                id: formData.get("id"),
+                caseAttachment: formData.get("caseAttachment")
+            }
+        });
+        setValue("caseAttachment", "");
+    };
+
     return (
         <>
             {/*<div><pre>{JSON.stringify(pageState, null, 4)}</pre></div>*/}
@@ -174,6 +188,14 @@ function CaseEditPage() {
                 <button className="btn btn btn-success" type="submit">Save Changes</button>
             </form>
             <br />
+            {pageState.info.attachmentName == null &&
+                <form encType="multipart/form-data" id="addAttachmentForm" onSubmit={handleSubmit(onAddAttachmentSubmit)}>
+                    <input type="hidden" value={pageState.info.id} name="id" />
+                    <span>Add Attachment -{" "}</span>
+                    <input name="caseAttachment" type="file" />
+                    <button className="btn btn-sm btn-alert" type="submit">Submit</button>
+                </form>
+            }
             <br />
             <form onSubmit={handleSubmit(onCommentSubmit)}>
                 <span className="h4">New Comment</span>

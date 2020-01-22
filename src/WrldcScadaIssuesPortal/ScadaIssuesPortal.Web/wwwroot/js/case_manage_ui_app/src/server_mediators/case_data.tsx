@@ -1,4 +1,5 @@
 ﻿import { ICaseInfo } from "../type_defs/ICaseInfo";
+import { IAddAttachmentPayload } from "../type_defs/IAddAttachmentPayload";
 
 export const getCaseInfo = async (baseAddr: string, caseId: number): Promise<ICaseInfo> => {
     try {
@@ -44,6 +45,26 @@ export const delAttachment = async (baseAddr: string, caseId: number): Promise<{
             throw Error(await resp.text())
         }
         console.log(`attachment successfully deleted for case Id = ${caseId}`);
+        return { success: true, payload: {} }
+    } catch (e) {
+        console.log(e);
+        return { success: false, payload: e.message };
+    }
+}
+
+export const addAttachment = async (baseAddr: string, formPayload: IAddAttachmentPayload): Promise<{ success: boolean, payload: any }> => {
+    try {
+        let formData = new FormData()
+        formData.append("id", formPayload.id)
+        formData.append("caseAttachment", formPayload.caseAttachment)
+        const resp = await fetch(`${baseAddr}/api/caseEditUI/attachment`, {
+            method: 'post',
+            body: formData
+        });
+        if (resp.status != 200) {
+            throw Error(await resp.text())
+        }
+        console.log(`attachment successfully added`);
         return { success: true, payload: {} }
     } catch (e) {
         console.log(e);

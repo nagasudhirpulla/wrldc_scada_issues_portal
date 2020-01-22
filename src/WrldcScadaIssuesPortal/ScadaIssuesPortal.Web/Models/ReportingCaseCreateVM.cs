@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using ScadaIssuesPortal.App.Extensions;
+using ScadaIssuesPortal.Core;
 using ScadaIssuesPortal.Core.Entities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace ScadaIssuesPortal.Web.Models
 {
@@ -19,8 +21,8 @@ namespace ScadaIssuesPortal.Web.Models
         public string ResolutionRemarks { get; set; }
         public string AdminRemarks { get; set; }
         //[FileExtensions(Extensions = ".jpg,.jpeg,.jpe,.jif,.jfif,.jfi,.png,.gif,.webp,.tiff,.tif,.bmp,.svg,.svgz,.pdf,.doc,.docx,.rar,.zip,.xls,.xlsx,.csv,.ppt,.pptx", ErrorMessage = "Incorrect file format")]
-        [MaxFileSize(5 * 1024 * 1024)]
-        [AllowedExtensions(new string[] { ".jpg", ".jpeg", ".jpe", ".jif", ".jfif", ".jfi", ".png", ".gif", ".webp", ".tiff", ".tif", ".bmp", ".svg", ".svgz", ".pdf", ".doc", ".docx", ".rar", ".zip", ".xls", ".xlsx", ".csv", ".ppt", ".pptx" })]
+        [MaxFileSize]
+        [AllowedExtensions]
         public IFormFile Attachment { get; set; }
     }
 }

@@ -1,5 +1,5 @@
 ﻿import { ICaseEditPageState } from "../type_defs/ICaseEditPageState";
-import { getCaseInfo, editCaseInfo, delAttachment } from "../server_mediators/case_data";
+import { getCaseInfo, editCaseInfo, delAttachment, addAttachment } from "../server_mediators/case_data";
 import { getUsers, getCurrentUser } from "../server_mediators/users";
 import { getTagEnums, addComment, delComment } from "../server_mediators/comments";
 import * as actionTypes from '../actions/actionTypes';
@@ -8,6 +8,7 @@ import { useReducer, useCallback, useEffect } from "react";
 import { IUserInfo } from "../type_defs/IUserInfo";
 import { ICaseInfo } from "../type_defs/ICaseInfo";
 import { createToast } from "../uitls/toastUtils";
+import { IAddAttachmentPayload } from "../type_defs/IAddAttachmentPayload";
 
 export const useCaseEditPageReducer = (initState: ICaseEditPageState): [ICaseEditPageState, React.Dispatch<IAction>] => {
     // create the reducer function
@@ -97,7 +98,6 @@ export const useCaseEditPageReducer = (initState: ICaseEditPageState): [ICaseEdi
                 const caseId = action.payload;
                 console.log("deleting attachment for case Id = ")
                 console.log(caseId)
-                //todo complete this
                 const delAttRes = await delAttachment(pageState.baseAddr, caseId)
                 if (delAttRes.success == true) {
                     // we successfully deleted the attachment for given case id
@@ -110,6 +110,26 @@ export const useCaseEditPageReducer = (initState: ICaseEditPageState): [ICaseEdi
                 } else {
                     //alert(commRes.payload);
                     createToast(delAttRes.payload, "error", {})
+                }
+                break;
+            }
+            case actionTypes.addAttachmentAction: {
+                const formData = action.payload as IAddAttachmentPayload;
+                console.log("adding attachment for case Id = ")
+                console.log(pageState.info.id)
+                //todo complete this
+                const addAttRes = await addAttachment(pageState.baseAddr, formData)
+                if (addAttRes.success == true) {
+                    // we successfully deleted the attachment for given case id
+                    // reload the whole case Object
+                    const caseInfo = await getCaseInfo(pageState.baseAddr, pageState.info.id);
+                    pageStateDispatch({
+                        type: actionTypes.setCaseInfoAction,
+                        payload: caseInfo
+                    });
+                } else {
+                    //alert(commRes.payload);
+                    createToast(addAttRes.payload, "error", {})
                 }
                 break;
             }

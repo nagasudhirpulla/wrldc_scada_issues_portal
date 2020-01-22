@@ -12,8 +12,10 @@ using Microsoft.Extensions.Logging;
 using ScadaIssuesPortal.Core;
 using ScadaIssuesPortal.Core.Entities;
 using ScadaIssuesPortal.Data;
+using ScadaIssuesPortal.App;
 using ScadaIssuesPortal.Web.Models;
 using MoreLinq.Extensions;
+using System.IO;
 
 namespace ScadaIssuesPortal.Web.Controllers
 {
@@ -26,12 +28,15 @@ namespace ScadaIssuesPortal.Web.Controllers
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ApplicationDbContext _context;
         private readonly IEmailSender _emailSender;
-        public CaseEditUIController(ILogger<ReportingCasesController> logger, ApplicationDbContext dbContext, UserManager<IdentityUser> userManager, IEmailSender emailSender)
+        private readonly FolderPaths _folderPaths;
+
+        public CaseEditUIController(ILogger<ReportingCasesController> logger, ApplicationDbContext dbContext, UserManager<IdentityUser> userManager, IEmailSender emailSender, FolderPaths folderPaths)
         {
             _userManager = userManager;
             _logger = logger;
             _context = dbContext;
             _emailSender = emailSender;
+            _folderPaths = folderPaths;
         }
 
         [HttpGet("commentTags")]
@@ -327,6 +332,59 @@ namespace ScadaIssuesPortal.Web.Controllers
             {
                 // check if the we are trying to edit was already deleted due to concurrency
                 if (!_context.ReportingCases.Any(rc => rc.Id == id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        [HttpPost("attachment")]
+        public async Task<IActionResult> AddAttachement([FromForm]CaseAttachmentFormModel caseAttachmentInfo)
+        {
+            // get the reporting case
+            ReportingCase repCase = await _context.ReportingCases.SingleOrDefaultAsync(rc => rc.Id == caseAttachmentInfo.Id);
+            if (repCase == default)
+            {
+                return NotFound();
+            }
+            // get the logged in user id
+            string currUserId = _userManager.GetUserId(User);
+            // check if user is admin
+            bool isCurrUserAdmin = User.IsInRole(SecurityConstants.AdminRoleString);
+            // check if requesting user is creator / concerned agency for authorizing issue editing
+            if (!(isCurrUserAdmin || repCase.CreatedById == currUserId))
+            {
+                return Unauthorized();
+            }
+            // Getting Attachment
+            IFormFile attachment = caseAttachmentInfo.CaseAttachment;
+            // Saving attachment on Server
+            if (attachment.Length > 0)
+            {
+                // create a new filename with timestamp
+                string attachmentPath = $"{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss")}_{Guid.NewGuid()}{Path.GetExtension(attachment.FileName)}";
+                string filePath = Path.Combine(_folderPaths.AttachmentsFolder, attachmentPath);
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    attachment.CopyTo(fileStream);
+                    repCase.AttachmentName = attachment.FileName;
+                    repCase.AttachmentPath = attachmentPath;
+                }
+            }
+            try
+            {
+                _context.Update(repCase);
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                // check if the we are trying to edit was already deleted due to concurrency
+                if (!_context.ReportingCases.Any(rc => rc.Id == caseAttachmentInfo.Id))
                 {
                     return NotFound();
                 }

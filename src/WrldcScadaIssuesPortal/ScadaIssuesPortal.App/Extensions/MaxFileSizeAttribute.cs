@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using ScadaIssuesPortal.Core;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
@@ -9,9 +10,9 @@ namespace ScadaIssuesPortal.App.Extensions
     public class MaxFileSizeAttribute : ValidationAttribute
     {
         private readonly int _maxFileSize;
-        public MaxFileSizeAttribute(int maxFileSize)
+        public MaxFileSizeAttribute()
         {
-            _maxFileSize = maxFileSize;
+            _maxFileSize = FileAttachmentConstants.MaxFileSize;
         }
 
         protected override ValidationResult IsValid(

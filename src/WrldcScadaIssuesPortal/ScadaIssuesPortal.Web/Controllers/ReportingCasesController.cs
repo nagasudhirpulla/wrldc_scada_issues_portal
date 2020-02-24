@@ -147,7 +147,7 @@ namespace ScadaIssuesPortal.Web.Controllers
                 // Getting Attachment
                 IFormFile attachment = vm.Attachment;
                 // Saving attachment on Server
-                if (attachment.Length > 0)
+                if (attachment != null && attachment.Length > 0)
                 {
                     // create a new filename with timestamp
                     string attachmentPath = $"{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss")}_{Guid.NewGuid()}{Path.GetExtension(attachment.FileName)}";

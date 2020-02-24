@@ -53,7 +53,7 @@
             CommentTag Tag = (item.Comments.Count() > 0) ? item.Comments.MaxBy(i => i.Created).First().Tag : CommentTag.Normal;
             <tr>
                 <td style="max-width:2em;font-size:0.9em">
-                    @item.CreatedAt.ToString("yyyy MMM dd HH:mm")
+                    @item.CreatedAt.ToString("yyyy-MM-dd HH:mm")
                 </td>
                 <td style="max-width:2em;font-size:0.8em">
                     @item.Id
@@ -65,7 +65,7 @@
                     @(item.ConcernedAgencies.Count > 0 ? item.ConcernedAgencies.Select(concerned => concerned.User.UserName).Aggregate((i, j) => i + ", " + j) : "")
                 </td>
                 <td style="max-width:2em;font-size:0.9em">
-                    @item.DownTime.ToString("yyyy MMM dd HH:mm")
+                    @item.DownTime.ToString("yyyy-MM-dd HH:mm")
                 </td>
                 <td style="max-width:20em;">
                     @foreach (var caseItem in item.CaseItems)

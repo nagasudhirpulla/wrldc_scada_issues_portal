@@ -20,7 +20,8 @@ namespace ScadaIssuesPortal.App.Extensions
         {
             if (value == null)
             {
-                return new ValidationResult("Unable to retrieve file");
+                return ValidationResult.Success;
+                //return new ValidationResult("Unable to retrieve file");
             }
             var file = value as IFormFile;
             var extension = Path.GetExtension(file.FileName);

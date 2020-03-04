@@ -158,11 +158,12 @@ function CaseEditPage() {
                     />}
 
                 {pageState.info.comments.length == 0 && <div><span>No comments recieved yet...</span><br /></div>}
+                {pageState.info.comments.length > 0 && <label className="question">Comments</label>}
                 {pageState.users.length > 0 &&
                     pageState.info.comments.sort((a, b) => (a.created > b.created) ? 1 : -1).map((comm, commInd) => {
                         return (
                             <div>
-                                <span style={{ fontSize: "small" }}>
+                                <span style={{ fontSize: "small", color: "cornflowerblue" }}>
                                     {(comm.tag == 1) && <span className="badge badge-danger"><i className="fas fa-ban"></i>{` ${pageState.commentTagTypes[comm.tag]}`}</span>}
                                     {(comm.tag == 2) && <span className="badge badge-success"><i className="fas fa-dot-circle"></i>{` ${pageState.commentTagTypes[comm.tag]}`}</span>}
                                     <b>{" "}{pageState.users.find(usr => (usr.id == comm.createdById)).userName}</b>
@@ -170,14 +171,13 @@ function CaseEditPage() {
                                 </span>
                                 <br />
                                 <span>{`${comm.comment}`}</span>
-                                <button className="btn btn-link" onClick={onCommDel(comm.id)}>delete</button>
+                                <button className="btn btn-sm btn-link" style={{ color: "red" }} onClick={onCommDel(comm.id)}>delete</button>
                                 <br />
                             </div>
                         )
                     }
                     )
                 }
-                <br />
                 {pageState.info.attachmentName != null &&
                     <>
                         <span>Attachment - {pageState.info.attachmentName}</span>
@@ -185,7 +185,7 @@ function CaseEditPage() {
                     </>
                 }
                 <br />
-                <button className="btn btn btn-success" type="submit">Save Changes</button>
+                <button className="btn btn-sm btn-success" type="submit">Save Changes</button>
             </form>
             <br />
             {pageState.info.attachmentName == null &&
@@ -193,19 +193,19 @@ function CaseEditPage() {
                     <input type="hidden" value={pageState.info.id} name="id" />
                     <span>Add Attachment -{" "}</span>
                     <input name="caseAttachment" type="file" />
-                    <button className="btn btn-sm btn-alert" type="submit">Submit</button>
+                    <button className="btn btn-sm btn-link" style={{ color: 'green' }} type="submit">Submit</button>
                 </form>
             }
             <br />
             <form onSubmit={handleSubmit(onCommentSubmit)}>
-                <span className="h4">New Comment</span>
+                <span className="h5" style={{ color: "#008b8b" }}>Add a Comment</span>
                 <br />
                 <span>Tag{" "}</span>
                 <select className="select" name="commTag" ref={register({ required: true })}>
                     {pageState.commentTagTypes.map(tt => { return <option value={tt}>{tt}</option> })}
                 </select>
                 <br />
-                <textarea name="comm" ref={register} style={{ minWidth: "60%" }} placeholder="Enter Comment..."></textarea>
+                <textarea name="comm" ref={register} style={{ minWidth: "60%", marginTop: "0.5em" }} placeholder="Enter a Comment..."></textarea>
                 <br />
                 <button className="btn btn-sm btn-info" type="submit">Add Comment</button>
             </form>

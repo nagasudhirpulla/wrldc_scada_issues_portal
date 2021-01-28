@@ -15,7 +15,9 @@ namespace ScadaIssuesPortal.Web.Models
         public List<CaseItemTemplate> CaseItems { get; set; } = new List<CaseItemTemplate>();
         public List<string> Responses { get; set; } = new List<string>();
         public List<string> ChoiceTexts { get; set; } = new List<string>();
+        [Display(Name = "Concerned People")]
         public string ConcernedAgencyId { get; set; }
+        [Display(Name = "Issue Time")]
         public DateTime DownTime { get; set; }
         public DateTime ResolutionTime { get; set; }
         public string ResolutionRemarks { get; set; }

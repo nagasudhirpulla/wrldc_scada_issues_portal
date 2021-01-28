@@ -182,8 +182,8 @@ namespace ScadaIssuesPortal.Web.Controllers
                             {
                                 _logger.LogInformation("New Case Concerned agency created");
                                 await _emailSender.SendEmailAsync($"{user.Email}",
-                                    "New WRLDC SCADA Issue alert",
-                                    $"Sir/Madam,<br>You are being associated with a new issue with id <b>{newCase.Id}</b> in WRLDC SCADA issues portal." +
+                                    "New Issue alert",
+                                    $"Sir/Madam,<br>You are being associated with a new issue with id <b>{newCase.Id}</b> in WRLDC issues portal." +
                                     "<br><br><b>Issue Details</b>" +
                                     $"<br>{caseDetail}" +
                                     "<br><br>For kind information please<br><br>Regards<br>IT WRLDC");
@@ -289,8 +289,8 @@ namespace ScadaIssuesPortal.Web.Controllers
                     IdentityUser user = await _context.Users.FindAsync(vm.ConcernedAgencyId);
                     string caseDetail = String.Join("<br>", repCase.CaseItems.Select(ci => $"{ci.Question} - {ci.Response}").ToArray());
                     await _emailSender.SendEmailAsync($"{user.Email};{adminUser.Email}",
-                            "WRLDC SCADA Issue alert",
-                            $"Sir/Madam,<br>You are being associated with an issue with id <b>{repCase.Id}</b> in WRLDC SCADA issues portal." +
+                            "WRLDC Issue alert",
+                            $"Sir/Madam,<br>You are being associated with an issue with id <b>{repCase.Id}</b> in WRLDC Issues portal." +
                             "<br><b>Issue Details</b>" +
                             $"<br>{caseDetail}" +
                             "<br><br>For kind information please<br><br>Regards<br>IT WRLDC");

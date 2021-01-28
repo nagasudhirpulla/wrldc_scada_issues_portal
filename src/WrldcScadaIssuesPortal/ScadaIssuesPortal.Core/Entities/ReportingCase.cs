@@ -11,6 +11,7 @@ namespace ScadaIssuesPortal.Core.Entities
         // todo use it as AuditableEntity
         public List<ReportingCaseItem> CaseItems { get; set; } = new List<ReportingCaseItem>();
 
+        [Display(Name = "Concerned People")]
         public List<ReportingCaseConcerned> ConcernedAgencies { get; set; } = new List<ReportingCaseConcerned>();
 
         public List<ReportingCaseComment> Comments { get; set; } = new List<ReportingCaseComment>();

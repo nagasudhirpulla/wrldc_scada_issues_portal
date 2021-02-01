@@ -231,14 +231,7 @@ namespace ScadaIssuesPortal.Web.Controllers
             {
                 // issue is closed in this block
                 // check if admin user is trying to re open issue
-                if (vm.Tag.Equals(CommentTag.Reopened))
-                {
-                    if (!isCurrUserAdmin)
-                    {
-                        return BadRequest("Only admin can reopen an issue");
-                    }
-                }
-                else
+                if (!vm.Tag.Equals(CommentTag.Reopened))
                 {
                     return BadRequest($"This issue with id {id} is already closed");
                 }
@@ -250,13 +243,13 @@ namespace ScadaIssuesPortal.Web.Controllers
                 {
                     return BadRequest("We can only reopen a closed issue");
                 }
-                if (vm.Tag.Equals(CommentTag.Closed))
-                {
-                    if (!isCurrUserAdmin)
-                    {
-                        return BadRequest("Only admin can close an issue");
-                    }
-                }
+                //if (vm.Tag.Equals(CommentTag.Closed))
+                //{
+                //    if (!isCurrUserAdmin)
+                //    {
+                //        return BadRequest("Only admin can close an issue");
+                //    }
+                //}
             }
 
             // add new comment

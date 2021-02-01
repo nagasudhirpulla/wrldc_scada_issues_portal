@@ -171,7 +171,7 @@ function CaseEditPage() {
                                 </span>
                                 <br />
                                 <span>{`${comm.comment}`}</span>
-                                <button className="btn btn-sm btn-link" style={{ color: "red" }} onClick={onCommDel(comm.id)}>delete</button>
+                                <button className="btn btn-sm btn-link" style={{ color: "red" }} onClick={onCommDel(comm.id)} type="button">delete</button>
                                 <br />
                             </div>
                         )
@@ -181,7 +181,7 @@ function CaseEditPage() {
                 {pageState.info.attachmentName != null &&
                     <>
                         <span>Attachment - {pageState.info.attachmentName}</span>
-                        <button className="btn btn-sm btn-link" onClick={onAttachmentDel} style={{ color: 'red' }}>delete</button>
+                        <button className="btn btn-sm btn-link" onClick={onAttachmentDel} style={{ color: 'red' }} type="button">delete</button>
                     </>
                 }
                 <br />

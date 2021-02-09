@@ -24,6 +24,8 @@ namespace ScadaIssuesPortal.App.Security
             SeedUserRoles(RoleManager);
             // seed admin user
             SeedAdminUser(UserManager);
+            // seed employees
+            SeedGuestUsers(UserManager);
         }
 
         /**
@@ -51,6 +53,34 @@ namespace ScadaIssuesPortal.App.Security
                 if (result.Succeeded)
                 {
                     userManager.AddToRoleAsync(user, SecurityConstants.AdminRoleString).Wait();
+                }
+            }
+        }
+
+        public void SeedGuestUsers(UserManager<IdentityUser> userManager)
+        {
+            Tuple<string, string>[] userInfos = {};
+
+            foreach (var uInfo in userInfos)
+            {
+
+                // check if admin user doesn't exist
+                if (userManager.FindByNameAsync(uInfo.Item1).Result == null)
+                {
+                    // create desired admin user object
+                    IdentityUser user = new IdentityUser
+                    {
+                        UserName = uInfo.Item1,
+                        Email = uInfo.Item2
+                    };
+
+                    // push desired admin user object to DB
+                    IdentityResult result = userManager.CreateAsync(user, "dummy").Result;
+
+                    if (result.Succeeded)
+                    {
+                        userManager.AddToRoleAsync(user, SecurityConstants.GuestRoleString).Wait();
+                    }
                 }
             }
         }
